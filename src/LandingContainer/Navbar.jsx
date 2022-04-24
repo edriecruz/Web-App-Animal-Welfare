@@ -10,11 +10,10 @@ import {CgNotes} from 'react-icons/cg'
 import {FaWpforms} from 'react-icons/fa'
 import {HiInformationCircle} from 'react-icons/hi'
 import {ImMenu} from 'react-icons/im'
-import { Modal, Form, Input,  Menu, Dropdown, DatePicker, InputNumber, Button, Radio, Collapse } from 'antd';
+import { Modal, Form, Input,  Menu, Dropdown, InputNumber, Radio,} from 'antd';
 
 import { Link } from 'react-scroll/modules'
 
-const { Panel } = Collapse;
 const { TextArea } = Input;
 
 export const Navbar = () => {
@@ -401,7 +400,7 @@ export const Navbar = () => {
                 <Form.Item
                   name="Last Seen"
                 >
-                  <DatePicker />
+                  <TextArea placeholder="Where did you last see? " />
                 </Form.Item>
 
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Email (for Updates) </p> 
@@ -479,12 +478,3 @@ export const Navbar = () => {
     </>
   )
 }
-// onClick={ () => {
-//   onClose()
-//   setActive('dashboard') }
-// }
-// className={ active === 'dashboard' ? 
-// 'bg-blue-500 p-3 rounded text-white block hover:text-white'
-// :
-// 'bg-white p-3 rounded text-gray-700 block'
-// }>
