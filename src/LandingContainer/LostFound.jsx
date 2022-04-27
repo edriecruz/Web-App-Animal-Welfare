@@ -2,19 +2,10 @@ import React from 'react'
 import {Link} from 'react-router-dom'
 import lostfoundbg from '../assets/lostfoundbg.png'
 import {FaFish} from 'react-icons/fa'
-
-import lost1 from '../assets/lost1.jpg'
-import lost2 from '../assets/lost2.jpg'
-import lost3 from '../assets/lost3.jpg'
-import lost4 from '../assets/lost4.jpg'
+import { lostfoundData } from './data'
 import LostFoundCards from './LostFoundCards'
 
-const data = [
-  { id: 1, owner: 'Edrie Cruz', status:'lost', email: 'edriecruz@gmail.com', address:'Marikina City', gender: 'Male', lastSeen: 'Antipolo' ,name: "Blacky", lost: '2022-04-21', img:lost1, contact:'09123456789', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.'},
-  { id: 2, owner: 'N/A', status:'lost', email: 'edriecruz@gmail.com', address:'Marikina City', gender: 'Male', lastSeen: 'Antipolo' ,name: "Bullsbal", lost: '2022-03-09', img:lost2, contact:'09123456789', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.'},
-  { id: 3, owner: 'Edrie Cruz', status:'lost', email: 'edriecruz@gmail.com', address:'Marikina City', gender: 'Male', lastSeen: 'Antipolo' ,name: "Brownie", lost: '2022-02-01', img:lost3, contact:'09123456789', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.'},
-  { id: 4, owner: 'Edrie Cruz', status:'found', email: 'edriecruz@gmail.com', address:'Marikina City', gender: 'Male', lastSeen: 'Antipolo' ,name: "Bullydog", lost: '2022-01-12', img:lost4, contact:'09123456789', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.'},
-];
+
 
 export const LostFound = () => {
   return (
@@ -42,14 +33,14 @@ export const LostFound = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-10 w-full mx-auto px-4" style={{
             maxWidth: '1400px'
           }}>
-            {data.slice(0,4).map((user) => (
+            {lostfoundData.slice(0,4).map((user) => (
                 <>
               <LostFoundCards lost={user} key={user.id}/>
               </>
               ))}
             </div>
             <div className='flex py-10'>
-              <Link to='/view-announcement'>
+              <Link to='/view-lostfound'>
                   <p className='text-xl font-bold text-[#ff7070] hover:text-white'> Click to view others </p> 
               </Link>
             </div>

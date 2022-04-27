@@ -55,7 +55,7 @@ export const Navbar = () => {
       setIsModalVisible(false);
   };
 
-  const isNotActive = 'flex items-center px-3 gap-3 text-lg font-medium text-[#155e59] transition-all duration-200 ease-in capitalize hover:rounded-lg hover:bg-[#155e59] hover:text-white hover:px-3 hover:py-2'
+  const isNotActive = 'flex items-center px-2 gap-3 text-lg font-medium text-[#155e59] transition-all duration-200 ease-in capitalize hover:rounded-lg hover:bg-[#155e59] hover:text-white hover:px-3 hover:py-2'
   const isNotActiveDrawer = 'flex items-center justify-center py-2 my-2 gap-5 text-gray-500 transition-all duration-200 ease-in capitalize text-[#155e59] hover:bg-[#155e59] hover:text-white hover:py-2 hover:px-2'
   // const isActiveDrawer = 'flex items-center justify-center py-2 my-2 gap-5 tracking-wide text-white bg-[#155e59] font-bold border-2 hover:text-white rounded-md border-[#155e59] transition-all duration-200 ease-in capitalize'
 
@@ -169,7 +169,7 @@ export const Navbar = () => {
                 >
           
                   <span>
-                    Information 
+                    Info
                   </span>
                   <AiFillCaretDown className='mr-1'/>
                 
@@ -239,7 +239,7 @@ export const Navbar = () => {
                   footer={
                     <button 
                     className='flex items-center justify-center w-full bg-[#155e59] text-white px-2 py-2 my-5 text-medium rounded-md font-medium font-Poppins hover:bg-[#d95858] duration-200'
-                    onClick={showModal}
+                    onClick={showLostFound}
                 
                  >
                     <IoIosPaw size='30px' />

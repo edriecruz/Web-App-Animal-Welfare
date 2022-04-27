@@ -1,5 +1,4 @@
 import React, {useState} from 'react'
-
 import {IoIosPaw} from 'react-icons/io'
 import {AiFillBell} from 'react-icons/ai'
 import { Modal } from 'antd';
@@ -30,7 +29,7 @@ const [isModalVisible, setIsModalVisible] = useState(false);
                     <AiFillBell size='30px'/>
                     <h1 className='pt-1 pl-2'>{ann.date}</h1>
                   </div>
-                <div className='w-3/4 py-3'>
+                <div className='w-3/4 py-3'   >
                   <h1 className='text-[#155e59] lg:text-lg font-bold md:text-base'>
                   {ann.title.slice(0,20)}</h1>
                   <p className='lg:text-base md:text-xs py-4'>
@@ -58,7 +57,7 @@ const [isModalVisible, setIsModalVisible] = useState(false);
                           <p className='text-[#155e59] text-2xl font-bold tracking-tight'> {ann.title} </p> 
                           <p className='text-[#155e59] text-base font-medium tracking-tight pt-2'> by: {ann.reportedBy} </p> 
                           <p className='text-[#2c2c2c] text-base py-5 px-5 text-justify'>{ann.description} </p> 
-                          <img src={ann.img} className='py-5'></img>
+                          <img src={ann.img} alt='announcement-profile' className='py-5'></img>
                       </div>
 
                     </Modal>

@@ -1,22 +1,10 @@
-import React, {useState} from 'react'
+import React from 'react'
 import {Link} from 'react-router-dom'
 import bone from '../assets/bone.png'
-import news1 from '../assets/news1.png'
-import news2 from '../assets/news2.png'
-import news3 from '../assets/news3.png'
+import { announcementData } from './data';
 import AnnouncementCards from './AnnouncementCards'
 
- const data = [
-    { id: 1, title: "Dog in Ukraine", reportedBy:'Edrie Isaac Cruz', date: '2022-04-21', img:news1, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed placerat eleifend ipsum a porttitor. Praesent tempus, urna quis luctus varius, lorem urna mollis mi, id suscipit dolor odio a ligula. Suspendisse ut luctus sem. Nullam sit amet volutpat lectus. Maecenas non enim in tellus luctus ultrices pellentesque in orci. Sed ac sagittis eros, ut faucibus velit. Vivamus ullamcorper arcu in augue maximus, sed imperdiet leo scelerisque. Nulla quis ultrices nisl, ac mattis risus. Aliquam facilisis tortor non leo vehicula maximus. Quisque quis nisl ex..'},
-    { id: 2, title: "Upcoming Vaccination", reportedBy:'Edrie Isaac Cruz', date: '2022-03-09', img:news2, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed placerat eleifend ipsum a porttitor. Praesent tempus, urna quis luctus varius, lorem urna mollis mi, id suscipit dolor odio a ligula. Suspendisse ut luctus sem. Nullam sit amet volutpat lectus. Maecenas non enim in tellus luctus ultrices pellentesque in orci. Sed ac sagittis eros, ut faucibus velit. Vivamus ullamcorper arcu in augue maximus, sed imperdiet leo scelerisque. Nulla quis ultrices nisl, ac mattis risus. Aliquam facilisis tortor non leo vehicula maximus. Quisque quis nisl ex..'},
-    { id: 3, title: "Pet Gadgets",reportedBy:'Edrie Isaac Cruz',  date: '2022-02-01', img:news3, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed placerat eleifend ipsum a porttitor. Praesent tempus, urna quis luctus varius, lorem urna mollis mi, id suscipit dolor odio a ligula. Suspendisse ut luctus sem. Nullam sit amet volutpat lectus. Maecenas non enim in tellus luctus ultrices pellentesque in orci. Sed ac sagittis eros, ut faucibus velit. Vivamus ullamcorper arcu in augue maximus, sed imperdiet leo scelerisque. Nulla quis ultrices nisl, ac mattis risus. Aliquam facilisis tortor non leo vehicula maximus. Quisque quis nisl ex..'},
-    { id: 4, title: "Dog", reportedBy:'Edrie Isaac Cruz', date: '2022-01-12', img:news1, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed placerat eleifend ipsum a porttitor. Praesent tempus, urna quis luctus varius, lorem urna mollis mi, id suscipit dolor odio a ligula. Suspendisse ut luctus sem. Nullam sit amet volutpat lectus. Maecenas non enim in tellus luctus ultrices pellentesque in orci. Sed ac sagittis eros, ut faucibus velit. Vivamus ullamcorper arcu in augue maximus, sed imperdiet leo scelerisque. Nulla quis ultrices nisl, ac mattis risus. Aliquam facilisis tortor non leo vehicula maximus. Quisque quis nisl ex..'},
-    { id: 5, title: "Dog", reportedBy:'Edrie Isaac Cruz', date: '2022-01-12', img:news1, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed placerat eleifend ipsum a porttitor. Praesent tempus, urna quis luctus varius, lorem urna mollis mi, id suscipit dolor odio a ligula. Suspendisse ut luctus sem. Nullam sit amet volutpat lectus. Maecenas non enim in tellus luctus ultrices pellentesque in orci. Sed ac sagittis eros, ut faucibus velit. Vivamus ullamcorper arcu in augue maximus, sed imperdiet leo scelerisque. Nulla quis ultrices nisl, ac mattis risus. Aliquam facilisis tortor non leo vehicula maximus. Quisque quis nisl ex..'},
-  ];
-
 export const Announcement = () => {
-
-  
   return (
     <>
     <div className='pb-5' id='announcement'>
@@ -37,7 +25,7 @@ export const Announcement = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-10 w-full mx-auto px-4" style={{
           maxWidth: '1400px'
         }}>
-          { data.slice(0,4).map((user) => (
+          { announcementData.slice(0,4).map((user) => (
               <>
               <AnnouncementCards ann={user} key={user.id}/>
             </>

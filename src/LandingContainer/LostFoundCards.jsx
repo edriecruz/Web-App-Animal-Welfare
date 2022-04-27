@@ -6,7 +6,7 @@ import { Modal } from 'antd';
 
 const LostFoundCards = ({lost}) => {
     
-    const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const showModal = () => {
       setIsModalVisible(true);
@@ -81,7 +81,7 @@ const LostFoundCards = ({lost}) => {
                             <p className="box row-start-7 row-end-7 col-start-1 col-end-1 text-[#155e59] font-medium">Desription </p>
                             <p className="box row-start-7 row-end-7 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{lost.description}</p>
                           </div>
-                            <img src={lost.img} className='py-2'></img>
+                            <img src={lost.img} alt='lostfound-profile' className='py-2'></img>
                       </div>
 
                     </Modal>
