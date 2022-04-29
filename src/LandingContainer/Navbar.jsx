@@ -334,7 +334,7 @@ export const Navbar = () => {
               <div className='flex justify-around pr-12 pt-2' >
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                   <button htmlType="submit" className='rounded-full text-[#155e59] text-md px-6 py-2'
-                    onClick={handleOk} 
+                    onClick={handleOkLostFound} 
                     style={{ 
                       borderWidth: '0.5px',
                       borderColor: '#155e59'

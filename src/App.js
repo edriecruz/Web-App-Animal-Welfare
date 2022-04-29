@@ -4,7 +4,9 @@ import { Routes, Route } from 'react-router-dom'
 import Landing from './Landing'
 import {AnnouncementViewPage} from './LandingContainer/AnnouncementViewPage'
 import LostFoundViewPage from './LandingContainer/LostFoundViewPage'
+import FAQ from './LandingContainer/FAQ'
 import { HashLoader } from 'react-spinners'
+import {OurProfile} from './LandingContainer/OurProfile'
 
 const App = () => {
   return (
@@ -17,6 +19,8 @@ const App = () => {
         <Route path="/*" element={<Landing />} />
         <Route path="/view-announcement" element={<AnnouncementViewPage />} />
         <Route path="/view-lostfound" element={<LostFoundViewPage />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/our-profile" element={<OurProfile />} />
       </Routes>
        
       </div>

@@ -9,10 +9,10 @@ export const AnnouncementViewPage = () => {
 
   return (
     <>
-    <div className='pb-5 px-5 min-h-screen 2xl:border-2 lg:border-0 2xl:border-[#155e59]' id='announcement'>
+    <div className='pb-5 px-5 bg-gray-100 min-h-screen' id='announcement'>
       <div className='flex justify-start pt-8 pl-8'>
         <NavLink to='/' 
-              className='flex justify-around bg-[#155e59] rounded-lg text-white px-5 py-1 hover:bg-[#d95858] hover:text-white'>
+              className='absolute flex justify-around bg-[#155e59] rounded-lg text-white px-5 py-1 hover:bg-[#d95858] hover:text-white'>
 
           <p className='lg:text-lg md:text-md sm:text-xsm pb-1 lg:font-medium sm:font-normal'> Back </p> 
         </NavLink>

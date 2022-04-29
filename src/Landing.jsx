@@ -1,6 +1,6 @@
 import React from 'react'
 
-// import Clouds from './assets/clouds.png'
+import Clouds from './assets/cloudsWhite.png'
 import {Home} from './LandingContainer/Home'
 import {Navbar} from './LandingContainer/Navbar'
 import {MV} from './LandingContainer/MV'
@@ -25,11 +25,10 @@ const Landing = () => {
    
               <div className='sticky top-0 left-0 right-0 z-40'> 
                 <Navbar />
-              </div>
-                {/* <div 
-                className="absolute align-top z-50">
+                <div className="2xl:hidden lg:absolute md:absolute sm:absolute bg-repeat bg-transparent align-top z-50" style={{marginTop:'-20px'}}>
                     <img src={Clouds} alt="clouds" />
-                </div> */}
+                </div>
+              </div>
                 <Home />
                 <MV />
                 <Info />

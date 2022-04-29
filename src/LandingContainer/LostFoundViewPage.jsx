@@ -11,7 +11,7 @@ const LostFoundViewPage = () => {
     <div className='pb-5 px-5 bg-[#155e59] bg-cover font-Poppins min-h-screen' id='lostfound'>
         <div className='flex justify-start pt-8 pl-8 '>
             <NavLink to='/' 
-                    className='flex justify-start bg-[#d95858] rounded-lg text-white px-5 py-1.5 hover:bg-white  hover:text-[#155e59]'>
+                    className='absolute flex justify-start bg-[#d95858] rounded-lg text-white px-5 py-1.5 hover:bg-white  hover:text-[#155e59]'>
     
                 <p className='lg:text-lg md:text-md sm:text-xsm pb-1 lg:font-medium sm:font-normal'> Back </p> 
             </NavLink>
