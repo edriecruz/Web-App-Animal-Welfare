@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { Routes, Route } from 'react-router-dom'
 // import Login from './components/Login'
 import Landing from './Landing'
@@ -7,20 +7,31 @@ import LostFoundViewPage from './LandingContainer/LostFoundViewPage'
 import FAQ from './LandingContainer/FAQ'
 import { HashLoader } from 'react-spinners'
 import {OurProfile} from './LandingContainer/OurProfile'
+import Admin from './Admin'
 
 const App = () => {
+  const [client, setClient] = useState('admin')
+
   return (
     <>
     <div className='2xl:flex justify-center'>
              
     <div className='hidden xsm:flex flex-col font-Poppins'>
       <Routes>
-        {/* <Route path="login" element={<Login />} /> */}
-        <Route path="/*" element={<Landing />} />
-        <Route path="/view-announcement" element={<AnnouncementViewPage />} />
-        <Route path="/view-lostfound" element={<LostFoundViewPage />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/our-profile" element={<OurProfile />} />
+        {
+          client === 'admin' ? 
+          <>
+            <Route path="/*" element={<Admin />} />
+        </>
+          : 
+          <>
+            <Route path="/*" element={<Landing />} />
+            <Route path="/view-announcement" element={<AnnouncementViewPage />} />
+            <Route path="/view-lostfound" element={<LostFoundViewPage />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/our-profile" element={<OurProfile />} />
+          </>
+        }
       </Routes>
        
       </div>
