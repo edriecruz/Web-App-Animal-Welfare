@@ -1,14 +1,23 @@
 import React from 'react'
 import Sidebar from './AdminContainer/Sidebar'
 import { HashLoader, RingLoader } from 'react-spinners'
+import { BgColorsOutlined } from '@ant-design/icons'
+import Background from './AdminContainer/Background'
+import DashBoardCards from './AdminContainer/DashBoardCards'
+import LostandFound from './AdminContainer/LostandFound'
 
 const Admin = () => {
   return (
     <>  
       <div>
         <div className='2xl:hidden lg:flex md:flex sm:hidden xsm:hidden font-Poppins'>
+       
           <Sidebar />
+          <LostandFound />
+      
+         
         </div>
+
           <div className='2xl:hidden lg:flex md:flex sm:hidden xsm:hidden justify-center items-center text-center text-white h-10 bg-[#155e59] '>
             <p> WAAW - ANIMAL WELFARE PHILIPPINES © 2022  </p>
           </div> 
