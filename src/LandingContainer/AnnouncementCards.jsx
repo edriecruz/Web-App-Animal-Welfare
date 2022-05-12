@@ -55,7 +55,10 @@ const [isModalVisible, setIsModalVisible] = useState(false);
                           
                       <div className='flex flex-col justify-start items-left text-left py-3 px-3'>
                           <p className='text-[#155e59] text-2xl font-bold tracking-tight'> {ann.title} </p> 
-                          <p className='text-[#155e59] text-base font-medium tracking-tight pt-2'> by: {ann.reportedBy} </p> 
+                          <div className='flex font-Poppins py-3 hover:text-[#155e59]'>
+                            <h1>{ann.date}</h1>
+                          </div>
+                          <p className='text-[#d95858] text-base font-medium tracking-tight pt-2'> by: {ann.reportedBy} </p> 
                           <p className='text-[#2c2c2c] text-base py-5 px-5 text-justify'>{ann.description} </p> 
                           <img src={ann.img} alt='announcement-profile' className='py-5'></img>
                       </div>

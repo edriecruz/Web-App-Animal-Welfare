@@ -4,7 +4,7 @@ import {IoIosPaw} from 'react-icons/io'
 import { Modal } from 'antd';
 
 
-const LostFoundCards = ({lost}) => {
+export const LostAndFoundCards = ({laf}) => {
     
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -22,17 +22,19 @@ const LostFoundCards = ({lost}) => {
 
     return (
         <>
-    <div className='basis-1/3 border bg-white'>
-    <img src={lost.img} alt='lost' className='rounded-md' width='400px' />
+{laf.approved ?
+  <>
+    <div className='basis-1/3 border bg-white shadow-2xl'>
+    <img src={laf.img} alt='lost' className='rounded-md' width='400px' />
       <div className='flex pr-5 py-3 text-[#155e59] hover:text-[#d95858] pl-5'>
         <AiFillCalendar size='30px'/>
-        <h1 className='pt-1 pl-2 text-[#155e59]'>{lost.lost}</h1>
+        <h1 className='pt-1 pl-2 text-[#155e59]'>{laf.lost}</h1>
       </div>
     <div className='w-3/4 py-3 flex flex-col pl-5'>
       <h1 className='text-[#d95858] lg:text-2xl md:text-base font-bold'>
-      {lost.contact}</h1>
+      {laf.contact}</h1>
       <p className='text-base text-[#155e59] '>
-      {lost.owner}
+      {laf.owner}
       </p>
         <button 
         onClick={showModal}
@@ -55,40 +57,40 @@ const LostFoundCards = ({lost}) => {
                           
                       <div className='flex flex-col justify-start items-left text-left py-3 px-3'>
                           <div className='flex justify-between'>
-                            <p className='text-[#155e59] text-2xl font-bold tracking-tight'> {lost.name} </p> 
+                            <p className='text-[#155e59] text-2xl font-bold tracking-tight'> {laf.name} </p> 
                             <div className='flex'>
                               <p className='text-lg text-[#155e59] font-medium tracking-tight capitalize pr-1'>  Status: </p> 
                               <p className='text-lg font-medium tracking-tight capitalize' 
-                              style={{color: lost.status === "lost" ? "#dc2626" : "#155e59"
+                              style={{color: laf.status === "lost" ? "#dc2626" : "#155e59"
                               }} > 
-                              { lost.status } </p> 
+                              { laf.status } </p> 
                             </div>
                           </div>
-                            <p className='text-[#d95858] text-base tracking-tight pt-2'> Found or Reported by: {lost.owner} </p> 
+                            <p className='text-[#d95858] text-base tracking-tight pt-2'> Found or Reported by: {laf.owner} </p> 
                           <div className='grid overflow-hidden grid-cols-3 grid-rows-6 gap-1 pt-5 px-5 pb-10'>
                             <p className='box row-start-1 row-end-1 col-start-1 col-end-1 text-[#155e59] font-medium'>Contact No: </p> 
-                            <p className='box row-start-1 row-end-1 col-start-2 col-end-4 text-[#2c2c2c]'>{lost.contact} </p> 
+                            <p className='box row-start-1 row-end-1 col-start-2 col-end-4 text-[#2c2c2c]'>{laf.contact} </p> 
                             <p className="box row-start-2 row-end-2 col-start-1 col-end-1 text-[#155e59] font-medium">Email: </p>
-                            <p className="box row-start-2 row-end-2 col-start-2 col-end-4 text-[#2c2c2c]">{lost.email}</p>
+                            <p className="box row-start-2 row-end-2 col-start-2 col-end-4 text-[#2c2c2c]">{laf.email}</p>
                             <p className="box row-start-3 row-end-3 col-start-1 col-end-1 text-[#155e59] font-medium">Owner (if Lost): </p>
-                            <p className="box row-start-3 row-end-3 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{lost.owner}</p>
+                            <p className="box row-start-3 row-end-3 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.owner}</p>
                             <p className="box row-start-4 row-end-4 col-start-1 col-end-1 text-[#155e59] font-medium">Address: </p>
-                            <p className="box row-start-4 row-end-4 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{lost.address}</p>
+                            <p className="box row-start-4 row-end-4 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.address}</p>
                             <p className="box row-start-5 row-end-5 col-start-1 col-end-1 text-[#155e59] font-medium">Last Seen: </p>
-                            <p className="box row-start-5 row-end-5 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{lost.lastSeen}</p>
+                            <p className="box row-start-5 row-end-5 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.lastSeen}</p>
                             <p className="box row-start-6 row-end-6 col-start-1 col-end-1 text-[#155e59] font-medium">Gender: </p>
-                            <p className="box row-start-6 row-end-6 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{lost.gender}</p>
+                            <p className="box row-start-6 row-end-6 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.gender}</p>
                             <p className="box row-start-7 row-end-7 col-start-1 col-end-1 text-[#155e59] font-medium">Pet Type:</p>
-                            <p className="box row-start-7 row-end-7 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{lost.petType}</p>
+                            <p className="box row-start-7 row-end-7 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{laf.petType}</p>
                             <p className="box row-start-8 row-end-8 col-start-1 col-end-1 text-[#155e59] font-medium"> Description </p>
-                            <p className="box row-start-8 row-end-8 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{lost.description}</p>
+                            <p className="box row-start-8 row-end-8 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{laf.description}</p>
                           </div>
-                            <img src={lost.img} alt='lostfound-profile' className='py-2'></img>
+                            <img src={laf.img} alt='lostfound-profile' className='py-2'></img>
                       </div>
 
                     </Modal>
+    </>
+      : '' }
   </>
   )
 }
-
-export default LostFoundCards

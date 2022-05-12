@@ -391,9 +391,20 @@ export const Navbar = () => {
                   name="reporting"
                   rules={[{ required: true, message: 'Please select' }]}
                 >
-                  <Radio.Group name="radiogroup">
+                  <Radio.Group name="lostfound">
                     <Radio value='lost'> Lost </Radio>
                     <Radio value='found'> Found</Radio>
+                  </Radio.Group>
+                </Form.Item>
+                <p className='text-[#2c2c2c] font-medium text-md pb-1'> Pet Type</p> 
+                <Form.Item
+                  name="petType"
+                  rules={[{ required: true, message: 'Please select' }]}
+                >
+                  <Radio.Group name="radiogroup">
+                    <Radio value='cat'> Cat </Radio>
+                    <Radio value='dog'> Dog</Radio>
+                    <Radio value='other'> Other</Radio>
                   </Radio.Group>
                 </Form.Item>
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Last Seen </p> 
@@ -443,7 +454,7 @@ export const Navbar = () => {
                   <Radio.Group name="radiogroup">
                     <Radio value='lost'> Male </Radio>
                     <Radio value='found'> Female</Radio>
-                    <Radio value='found'> Unsure</Radio>
+                    <Radio value='unsure'> Unsure</Radio>
                   </Radio.Group>
                 </Form.Item>
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Pet's Picture for Report</p> 

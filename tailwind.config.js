@@ -959,5 +959,8 @@ module.exports = {
       'textRed': '#ff7070',
     },
     extend: {},
-  plugins: [],
+    plugins: [
+      require('tailwind-scrollbar-hide')
+      // ...
+    ]
 }

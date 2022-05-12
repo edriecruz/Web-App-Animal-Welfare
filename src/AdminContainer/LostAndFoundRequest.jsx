@@ -3,15 +3,14 @@ import {FcSearch} from 'react-icons/fc'
 import infobg from '../assets/infobg.png'
 import {IoIosPaw} from 'react-icons/io'
 import {AiFillCaretDown} from 'react-icons/ai'
-import { Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Menu, Dropdown } from 'antd';
 import { lostfoundData } from '../LandingContainer/data'
-import { LostAndFoundCards } from './LostAndFoundCards'
+import { LostAndFoundCardsRequest } from './LostAndFoundCardsRequest'
 
-const LostandFound  = () => {
+const LostAndFoundRequest  = () => {
 
     const isNotActive = 'flex items-center px-2 gap-3 text-base font-medium text-[#155e59] capitalize bg-white rounded-lg py-1 px-2 hover:text-[#d95858]'
-
 
     const info = (
         <Menu style={{ padding: 0, marginTop:'15px'}}
@@ -73,7 +72,7 @@ const LostandFound  = () => {
                     height: '250px'
                 }} >    
                 <div className='flex justify-between'>
-                    <h1 className='pt-7 text-xl font-semibold text-white md:text-base md:mt-1 lg:text-xl lg:ml-16 md:ml-10'> Lost and Found Profiles </h1> 
+                    <h1 className='pt-7 text-xl font-semibold text-white md:text-base md:mt-1 lg:text-xl lg:ml-16 md:ml-10'> Lost and Found Request </h1> 
                     <div className="pt-6 relative text-gray-600 lg:mr-16 md:mr-3">
                         <input className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
                             type="search" name="search" placeholder="Search" />
@@ -108,7 +107,7 @@ const LostandFound  = () => {
                 }}>
                     {lostfoundData.map((user) => (
                         <>
-                        <LostAndFoundCards laf={user} key={user.id}/>
+                        <LostAndFoundCardsRequest laf={user} key={user.id}/>
                     </>
                     ))}
                     </div>
@@ -117,4 +116,4 @@ const LostandFound  = () => {
     </>
      )
 }
-export default LostandFound;
+export default LostAndFoundRequest;

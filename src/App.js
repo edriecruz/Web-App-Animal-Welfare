@@ -8,6 +8,11 @@ import FAQ from './LandingContainer/FAQ'
 import { HashLoader } from 'react-spinners'
 import {OurProfile} from './LandingContainer/OurProfile'
 import Admin from './Admin'
+import DashBoardCards from './AdminContainer/DashBoardCards'
+import LostandFound from './AdminContainer/LostandFound'
+import AnimalList from './AdminContainer/AnimalList'
+import LostAndFoundRequest from './AdminContainer/LostAndFoundRequest'
+import AnnouncementAdmin from './AdminContainer/AnnouncementAdmin'
 
 const App = () => {
   const [client, setClient] = useState('admin')
@@ -21,7 +26,11 @@ const App = () => {
         {
           client === 'admin' ? 
           <>
-            <Route path="/*" element={<Admin />} />
+            <Route path="/*" element={<Admin display={<DashBoardCards />}/>} />
+            <Route path="/lostfound-approved" element={<Admin display={<LostandFound />}/>} />
+            <Route path="/lostfound-request" element={<Admin display={<LostAndFoundRequest />}/>} />
+            <Route path="/animal-profile" element={<Admin display={<AnimalList />}/>} />
+            <Route path="/announcement" element={<Admin display={<AnnouncementAdmin />}/>} />
         </>
           : 
           <>
