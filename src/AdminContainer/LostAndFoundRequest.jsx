@@ -102,7 +102,7 @@ const LostAndFoundRequest  = () => {
                         </Link>
                     </Dropdown>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 w-full mx-auto px-10 lg:ml-5 md:ml-2 py-6 mt-10" style={{
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mx-auto px-10 lg:ml-5 md:ml-2 py-6 mt-10" style={{
                     maxWidth: '1400px'
                 }}>
                     {lostfoundData.map((user) => (

@@ -19,10 +19,10 @@ const DashBoardCards = () => {
                     height: '250px'
                 }} >    
                         <div className='flex justify-between'>
-                            <h1 className='pt-7 text-xl font-semibold text-white lg:ml-24 md:ml-8'> Here is your Dashboard </h1> 
+                            <h1 className='pt-7 text-xl font-semibold text-white lg:ml-24 md:ml-10'> Here is your Dashboard </h1> 
                             <h1 className='pt-7 text-xl font-semibold text-white lg:mr-16 md:mr-8'> Welcome Back!  </h1> 
                         </div>
-                    <div className='flex justify-evenly pt-10 md:pl-2 lg:pl-12'>
+                    <div className='flex justify-evenly pt-10 md:pl-6 lg:pl-12'>
                         <div className='bg-white h-28 rounded-lg shadow-lg lg:w-48 md:w-36 '>
                             <h1 className='flex justify-center text-center pt-2 font-medium text-base'> Dog Population </h1>
                             <div className='flex justify-center items-center text-center my-5'>

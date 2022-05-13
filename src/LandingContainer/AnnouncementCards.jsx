@@ -23,21 +23,21 @@ const [isModalVisible, setIsModalVisible] = useState(false);
   return (
    <>
    
-   <div className='basis-1/3' key={ann.id}>
+            <div className='basis-1/3 shadow-lg' key={ann.id}>
                 <img src={ann.img} alt='announcement' width='400px' />
-                  <div className='flex font-Poppins py-3 hover:text-[#155e59]'>
+                  <div className='flex font-Poppins py-3 ml-3 hover:text-[#155e59]'>
                     <AiFillBell size='30px'/>
                     <h1 className='pt-1 pl-2'>{ann.date}</h1>
                   </div>
                 <div className='w-3/4 py-3'   >
-                  <h1 className='text-[#155e59] lg:text-lg font-bold md:text-base'>
+                  <h1 className='text-[#155e59] ml-5 lg:text-lg font-bold md:text-base'>
                   {ann.title.slice(0,20)}</h1>
-                  <p className='lg:text-base md:text-xs py-4'>
+                  <p className='lg:text-base ml-5 md:text-xs py-4'>
                   {ann.description.slice(0,50) + '...'}
                   </p>
                     <button 
                       onClick={showModal}
-                      className="flex items-center text-[#d95858] font-bold text-base pt-4 hover:text-[#155e59]">
+                      className="flex items-center ml-5 text-[#d95858] font-bold text-base pt-4 hover:text-[#155e59]">
                       Read More
                     <IoIosPaw size='30px' className="ml-1 hover:text-[#155e59]"/>
                    {/* Modal Announcement*/}

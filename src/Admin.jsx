@@ -1,8 +1,6 @@
 import React from 'react'
 import Sidebar from './AdminContainer/Sidebar'
 import { HashLoader, RingLoader } from 'react-spinners'
-import DashBoardCards from './AdminContainer/DashBoardCards'
-
 
 const Admin = ({display}) => {
   return (
@@ -21,9 +19,6 @@ const Admin = ({display}) => {
     
         </div>
 
-          {/* <div className='2xl:hidden lg:flex md:flex sm:hidden xsm:hidden justify-center items-center text-center text-white h-10 bg-[#155e59] '>
-            <p> WAAW - ANIMAL WELFARE PHILIPPINES © 2022  </p>
-          </div>  */}
       </div>
         <div className="flex justify-center items-center bg-[#155e59] 2xl:hidden lg:hidden md:hidden sm:flex xsm:flex p-5">
           <div className="flex justify-center items-center w-screen h-screen px-5">

@@ -137,7 +137,7 @@ const AnnouncementAdmin  = () => {
                         </Link>
                     </Dropdown>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 w-full mx-auto px-10 lg:ml-5 md:ml-2 py-6 mt-10" style={{
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mx-auto px-10 lg:ml-5 md:ml-2 py-6 mt-10" style={{
                     maxWidth: '1400px'
                 }}>
                      { announcementData.slice(0,4).map((user) => (
@@ -204,6 +204,18 @@ const AnnouncementAdmin  = () => {
                   <TextArea placeholder="Details" />
                 </Form.Item>
 
+                  
+                { /* Picture */ }
+
+                <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Photo</p> 
+                <Form.Item
+                  name="announcement-picture"
+                  rules={[{ required: true, message: 'Please upload picture' }]}>
+                  <input 
+                  type="file"  
+                  accept="image/png, image/svg, image/jpg, image/jpeg"
+                />
+              </Form.Item>
     
                 <div className='flex justify-around pr-12 pt-2' >
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

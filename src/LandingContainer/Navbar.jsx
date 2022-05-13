@@ -11,14 +11,15 @@ import {FaWpforms} from 'react-icons/fa'
 import {HiInformationCircle} from 'react-icons/hi'
 import {ImMenu} from 'react-icons/im'
 import { Modal, Form, Input,  Menu, Dropdown, InputNumber, Radio,} from 'antd';
-
 import { Link } from 'react-scroll/modules'
-
+import { useUserContext } from '../context/userContext';
+import { ClipLoader } from 'react-spinners';
 const { TextArea } = Input;
 
 export const Navbar = () => {
 
   const [visible, setVisible] = useState(false);
+  
   const showDrawer = () => {
     setVisible(true);
   };
@@ -59,7 +60,10 @@ export const Navbar = () => {
   const isNotActiveDrawer = 'flex items-center justify-center py-2 my-2 gap-5 text-gray-500 transition-all duration-200 ease-in capitalize text-[#155e59] hover:bg-[#155e59] hover:text-white hover:py-2 hover:px-2'
   // const isActiveDrawer = 'flex items-center justify-center py-2 my-2 gap-5 tracking-wide text-white bg-[#155e59] font-bold border-2 hover:text-white rounded-md border-[#155e59] transition-all duration-200 ease-in capitalize'
 
-  // Lost and Found Modal
+  //Authentication 
+
+  const { login,  setEmail, setPassword, email, password } = useUserContext();
+
 
   const info = (
     <Menu style={{ padding: 0, marginTop:'15px'}}
@@ -312,8 +316,6 @@ export const Navbar = () => {
                 labelCol={{ span: 0 }}
                 wrapperCol={{ span: 30 }}
                 initialValues={false}
-
-                // onFinish={onFinish}
                 // onFinishFailed={onFinishFailed}
                 autoComplete="off"
               >
@@ -321,15 +323,20 @@ export const Navbar = () => {
                 <Form.Item
                   name="Email"
                   rules={[{ required: true, message: 'Please input your Email!' }]}
+			
                 >
-                  <Input />
+                  <Input 
+		  onChange={(e) => {setEmail(e.target.value)}}
+		/>
                 </Form.Item>
                 <p className='text-[#999897] text-md pb-3'> Password </p> 
                 <Form.Item
                   name="Password"
                   rules={[{ required: true, message: 'Please input your Password!' }]}
                 >
-                  <Input.Password />
+                  <Input.Password 
+		  onChange={(e) => {setPassword(e.target.value)}} 
+		/>
                 </Form.Item>
               <div className='flex justify-around pr-12 pt-2' >
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
@@ -344,8 +351,9 @@ export const Navbar = () => {
                   </button>
                 </Form.Item>
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <button htmlType="submit" className='rounded-full bg-[#155e59] text-md text-white px-5 py-2'>
-                    Submit
+                  <button onClick={login}  disabled={!email && !password} htmlType="submit" 
+                    className='rounded-full bg-[#155e59] text-md text-white px-5 py-2'>
+                      Login
                   </button>
                 </Form.Item>
               </div>
@@ -355,7 +363,7 @@ export const Navbar = () => {
 
     {/* Lost and Found Form*/}
 
-    <Modal 
+     <Modal 
         title={false} 
         footer={false}
         visible={isModalVisible}
@@ -391,20 +399,9 @@ export const Navbar = () => {
                   name="reporting"
                   rules={[{ required: true, message: 'Please select' }]}
                 >
-                  <Radio.Group name="lostfound">
+                  <Radio.Group name="radiogroup">
                     <Radio value='lost'> Lost </Radio>
                     <Radio value='found'> Found</Radio>
-                  </Radio.Group>
-                </Form.Item>
-                <p className='text-[#2c2c2c] font-medium text-md pb-1'> Pet Type</p> 
-                <Form.Item
-                  name="petType"
-                  rules={[{ required: true, message: 'Please select' }]}
-                >
-                  <Radio.Group name="radiogroup">
-                    <Radio value='cat'> Cat </Radio>
-                    <Radio value='dog'> Dog</Radio>
-                    <Radio value='other'> Other</Radio>
                   </Radio.Group>
                 </Form.Item>
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Last Seen </p> 
@@ -454,7 +451,7 @@ export const Navbar = () => {
                   <Radio.Group name="radiogroup">
                     <Radio value='lost'> Male </Radio>
                     <Radio value='found'> Female</Radio>
-                    <Radio value='unsure'> Unsure</Radio>
+                    <Radio value='found'> Unsure</Radio>
                   </Radio.Group>
                 </Form.Item>
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Pet's Picture for Report</p> 
