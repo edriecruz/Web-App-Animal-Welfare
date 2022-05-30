@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react';
 import {FcSearch} from 'react-icons/fc'
 import infobg from '../assets/infobg.png'
 import {IoIosPaw} from 'react-icons/io'
@@ -7,14 +7,43 @@ import { Link } from 'react-router-dom';
 import { Menu, Dropdown } from 'antd';
 import { Modal, Form, Input } from 'antd';
 import Logo from '../assets/logo.png'
-import { announcementData } from '../LandingContainer/data';
-import AnnouncementCards from '../LandingContainer/AnnouncementCards'
+import { db } from '../firebase-config';
+import { collection, getDocs, addDoc, doc, deleteDoc, serverTimestamp } from "firebase/firestore";
+
 
 
 const { confirm } = Modal;
 const { TextArea } = Input;
 
 const AnnouncementAdmin  = () => {
+  
+  const [newTitle, setNewTitle] = useState("");
+  const [newAuthor, setNewAuthor] = useState("");
+  const [newDetails, setNewDetails] = useState("");
+  const [users, setUsers] = useState([]);
+  const usersCollectionRef = collection(db, "Announcement");
+
+  const createAnnouncement = async () => {
+    await addDoc(usersCollectionRef,  {Title: newTitle, Author: newAuthor, Details: newDetails, timestamp: serverTimestamp()});
+  };
+
+  const deleteAnnouncement = async (id) => {
+    const userDoc = doc(db, 'Announcement', id);
+    await deleteDoc(userDoc)
+  };
+
+  useEffect(() => {
+
+    const getAnnouncement = async () => {
+      const data = await getDocs(usersCollectionRef);
+      setUsers(data.docs.map((doc) => ({...doc.data(), id: doc.id})));
+    }
+
+    getAnnouncement()
+  }, [])
+
+
+
 
     const isNotActive = 'flex items-center px-2 gap-3 text-base font-medium text-[#155e59] capitalize bg-white rounded-lg py-1 px-2 hover:text-[#d95858]'
     const buttonStyle = 'flex justify-center items-center text-white lg:ml-16 md:ml-10 mt-5 px-3 gap-3 text-base font-medium text-[#155e59] capitalize bg-white rounded-lg hover:text-[#d95858]'
@@ -79,7 +108,7 @@ const AnnouncementAdmin  = () => {
           setIsModalVisible(false);
       };
 
-        
+      // For Confirmation in Addition
       function showPromiseConfirm() {
         confirm({
           title: <> <div className='flex'> <IoIosPaw size={25} color="#155e59" /><p className='pl-2'> Do you really want to add it publicly? </p> </div> </> ,
@@ -88,12 +117,31 @@ const AnnouncementAdmin  = () => {
             return new Promise((resolve, reject) => {
               setIsModalVisible(false)
               setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+              window.location.reload(false);
             }).catch(() => console.log('Oops errors!'));
               
           },
           onCancel() {},
         });
       }
+
+      // For Deletion
+      function showPromiseConfirmDelete() {
+        confirm({
+          title: <> <div className='flex'> <IoIosPaw size={25} color="#155e59" /><p className='pl-2'> Do you really want to delete it? </p> </div> </> ,
+          icon: false,
+          onOk() {
+            return new Promise((resolve, reject) => {
+              setIsModalVisible(false)
+              setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+              window.location.reload(false);
+            }).catch(() => console.log('Oops errors!'));
+              
+          },
+          onCancel() {},
+        });
+      }
+
 
   return (
      
@@ -140,12 +188,23 @@ const AnnouncementAdmin  = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mx-auto px-10 lg:ml-5 md:ml-2 py-6 mt-10" style={{
                     maxWidth: '1400px'
                 }}>
-                     { announcementData.slice(0,4).map((user) => (
-                        <>
-                        <AnnouncementCards ann={user} key={user.id}/>
-                        </>
-                        ))}
-                   
+                              {/* { announcementData.slice(0,4).map((user) => (
+                                  <>
+                                  <AnnouncementCards ann={user} key={user.id}/>
+                                  </>
+                                  ))}
+                              */}
+                   {users.map((user) => { 
+                    return (
+                    <div> 
+                      <h2>Title: {user.Title}</h2>
+                      <h4>Author: {user.Author}</h4>
+                      <h4>Details: {user.Details}</h4>
+                      <h4>Date: {user.Date}</h4>
+                      <button onClick={() => {deleteAnnouncement(user.id); showPromiseConfirmDelete(); }}>Delete</button>
+                    </div>
+                    );
+                  })}
                     </div>
                 </div>
         </div>
@@ -177,45 +236,43 @@ const AnnouncementAdmin  = () => {
                     <img src={Logo} alt="logo-login" width='180px' className='' />
                 </div>
                 
+              
                 {/* Title */}
                 <p className='text-[#2c2c2c] font-medium text-md pt-5 pb-2'> Announcement Title </p> 
-                <Form.Item
-                  name="title"
-                  rules={[{ required: true, message: 'Please input Announcement Title!' }]}
-                >
-                  <Input placeholder="Announcement Title" className='capitalize'/>
-                </Form.Item>
-
-                 {/* Author */}
+                    <Form.Item
+                      name="title"
+                      rules={[{ required: true, message: 'Please input Announcement Title!' }]}
+                    >
+                      <Input placeholder="Announcement Title" className='capitalize' onChange={(event) => {setNewTitle(event.target.value)}}/>
+                    </Form.Item>
+                {/* Author */}
                  <p className='text-[#2c2c2c] font-medium text-md pt-3 pb-2'> Author </p> 
-                <Form.Item
-                  name="Author"
-                  rules={[{ required: true, message: 'Please input the author' }]}
-                >
-                  <Input placeholder="Author" className='capitalize'/>
-                </Form.Item>
-              
+                    <Form.Item
+                      name="Author"
+                      rules={[{ required: true, message: 'Please input the author' }]}
+                    >
+                      <Input placeholder="Author" className='capitalize' onChange={(event) => {setNewAuthor(event.target.value)}}/>
+                    </Form.Item>
                 {/* Details */}
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'>Details</p> 
-                <Form.Item
-                  name="details"
-                  rules={[{ required: true, message: 'Please input the details' }]}
-                >
-                  <TextArea placeholder="Details" />
-                </Form.Item>
-
-                  
+                    <Form.Item
+                      name="details"
+                      rules={[{ required: true, message: 'Please input the details' }]}
+                    >
+                      <TextArea placeholder="Details" onChange={(event) => {setNewDetails(event.target.value)}}/>
+                    </Form.Item>
+                    
                 { /* Picture */ }
 
-                <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Photo</p> 
-                <Form.Item
-                  name="announcement-picture"
-                  rules={[{ required: true, message: 'Please upload picture' }]}>
-                  <input 
-                  type="file"  
-                  accept="image/png, image/svg, image/jpg, image/jpeg"
-                />
-              </Form.Item>
+                  {/* <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Photo</p> 
+                    <Form.Item
+                      name="announcement-picture"
+                      rules={[{ required: true, message: 'Please upload picture' }]}>
+                      <input 
+                      type="file"  
+                      accept="image/png, image/svg, image/jpg, image/jpeg"
+                    />
+                    </Form.Item> */}
     
                 <div className='flex justify-around pr-12 pt-2' >
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
@@ -230,12 +287,12 @@ const AnnouncementAdmin  = () => {
                   </button>
                 </Form.Item>
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <button htmlType="submit" className='rounded-full bg-[#155e59] text-md text-white px-5 py-2 hover:bg-[#d95858]'
-                  onClick={showPromiseConfirm}>
+                  <button htmlType="submit" className='rounded-full bg-[#155e59] text-md text-white px-5 py-2 hover:bg-[#d95858]' onClick={() => { createAnnouncement(); showPromiseConfirm(); }}>
                     Add
                   </button>
                 </Form.Item>
-              </div>
+                </div>
+              
                 </Form>
                   </>
                 </Modal>

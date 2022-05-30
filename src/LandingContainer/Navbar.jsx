@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import { useState, useEffect } from "react";
 import LogoTitle from '../assets/logo-title.png'
 import Logo from '../assets/logo.png'
 import Title from '../assets/AnimalWelfare.png'
@@ -14,8 +14,20 @@ import { Modal, Form, Input,  Menu, Dropdown, InputNumber, Radio,} from 'antd';
 import { Link } from 'react-scroll/modules'
 import { useUserContext } from '../context/userContext';
 import { ClipLoader } from 'react-spinners';
-const { TextArea } = Input;
 
+// FIREBASE
+import { db } from "../firebase-config";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
+
+
+
+const { TextArea } = Input;
 export const Navbar = () => {
 
   const [visible, setVisible] = useState(false);
@@ -65,6 +77,43 @@ export const Navbar = () => {
   const { login,  setEmail, setPassword, email, password } = useUserContext();
 
 
+
+
+
+//  LOST AND FOUND DB
+
+const [ newLAFowner, setNewLAFowner ] = useState("");
+const [ newLAFstatus, setNewLAFstatus ] = useState("");
+const [ newLAFseen, setNewLAFseen ] = useState("");
+const [ newLAFemail, setNewLAFemail ] = useState("");
+const [ newLAFcontactnumber, setNewLAFcontactnumber ] = useState(0);
+const [ newLAFpetname, setNewLAFpetname ] = useState("");
+const [ newLAFpetdescription, setNewLAFpetdescription ] = useState("");
+const [ newLAFpetgender, setNewLAFpetgender ] = useState("");
+
+  const [user, setUsers] = useState([]);
+  const usersCollectionRef = collection(db, "LostAndFound");
+
+  const createLAFR = async () => {
+    await addDoc(usersCollectionRef, { LAFowner: String(newLAFowner), LAFstatus: String(newLAFstatus), LAFseen: String(newLAFseen), LAFemail: String(newLAFemail),
+      LAFcontactnumber: String(newLAFcontactnumber), LAFpetname: String(newLAFpetname), LAFpetdescription: String(newLAFpetdescription), LAFpetgender: String(newLAFpetgender)
+
+  });
+  };
+
+
+
+
+  useEffect(() => {
+    const getUsers = async () => {
+      const data = await getDocs(usersCollectionRef);
+      setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    };
+
+    getUsers();
+  }, []);
+
+  
   const info = (
     <Menu style={{ padding: 0, marginTop:'15px'}}
 
@@ -361,6 +410,54 @@ export const Navbar = () => {
             </div>
       </Modal>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     {/* Lost and Found Form*/}
 
      <Modal 
@@ -387,74 +484,113 @@ export const Navbar = () => {
                 // onFinishFailed={onFinishFailed}
                 autoComplete="off"
               >
+                {/* lost and found name */}
                 <p className='text-[#2c2c2c] font-medium text-md pt-5'> Your Full Name </p> 
                 <Form.Item
                   name="full name"
                   rules={[{ required: true, message: 'Please input your Email!' }]}
                 >
-                  <Input placeholder='Full Name'/>
+                  <Input onChange={(event) => {
+                    setNewLAFowner(event.target.value);
+                  }}
+                  placeholder='Full Name'/>
                 </Form.Item>
+
+                {/* lost and found report */}
                 <p className='text-[#2c2c2c] font-medium text-md pb-1'> What are you reporting? </p> 
                 <Form.Item
                   name="reporting"
                   rules={[{ required: true, message: 'Please select' }]}
                 >
-                  <Radio.Group name="radiogroup">
+                  <Radio.Group onChange={(event) => {
+                    setNewLAFstatus(event.target.value);
+                  }}
+                  name="radiogroup">
                     <Radio value='lost'> Lost </Radio>
                     <Radio value='found'> Found</Radio>
                   </Radio.Group>
                 </Form.Item>
+
+                {/* lost and found last seen */}
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Last Seen </p> 
                 <Form.Item
                   name="Last Seen"
                 >
-                  <TextArea placeholder="Where did you last see? " />
+                  <TextArea onChange={(event) => {
+                    setNewLAFseen(event.target.value);
+                  }}
+                  placeholder="Where did you last see? " />
                 </Form.Item>
 
+                {/* lost and found email */}
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Email (for Updates) </p> 
                 <Form.Item
                   name="email"
                  
                 >
-                  <Input placeholder='Email'/>
+                  <Input onChange={(event) => {
+                    setNewLAFemail(event.target.value);
+                  }}
+                  placeholder='Email'/>
                 </Form.Item>
+
+                    {/* lost and found contact number */}
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Contact Number (for Updates) </p> 
                 <Form.Item
                   name="contact"
                   rules={[{ required: true, message: 'Please input your contact for updates!' }]}
                 >
-                  <InputNumber type="numbers" 
+                  <Input onChange={(event) => {
+                    setNewLAFcontactnumber(event.target.value);
+                  }}
+                    type="numbers" 
                     style={{ width: '100%' }} 
                     minLength="11"
                     placeholder='Contact No'
-                    controls={false}
+                 
                     maxLength="11"/>
+
+                    {/* lost and found pet name */}
                 </Form.Item>
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Pet's Name </p> 
                 <Form.Item
                   name="pet name"
                   rules={[{ required: true, message: 'Please input the name of pet!' }]}
                 >
-                  <Input placeholder="Pet's Name" />
+                  <Input onChange={(event) => {
+                    setNewLAFpetname(event.target.value);
+                  }}
+                  placeholder="Pet's Name" />
                 </Form.Item>
+
+                      {/* lost and found pet description */}
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Pet's Description </p> 
                 <Form.Item
-                  name="pet gender"
+                  name="pet description"
                 >
-                  <TextArea placeholder="Pet's Description (For Unique Identification)" />
+                  <TextArea onChange={(event) => {
+                    setNewLAFpetdescription(event.target.value);
+                  }} 
+                  placeholder="Pet's Description (For Unique Identification)" />
                 </Form.Item>
+
+
+                      {/* lost and found pet gender */}
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Pet's Gender </p> 
                 <Form.Item
                   name="pet gender"
                   rules={[{ required: true, message: 'Please select' }]}
                 >
-                  <Radio.Group name="radiogroup">
-                    <Radio value='lost'> Male </Radio>
-                    <Radio value='found'> Female</Radio>
-                    <Radio value='found'> Unsure</Radio>
+                  <Radio.Group onChange={(event) => {
+                    setNewLAFpetgender(event.target.value);
+                  }}
+                  name="radiogroup">
+                    <Radio value='Male'> Male </Radio>
+                    <Radio value='Female'> Female</Radio>
                   </Radio.Group>
                 </Form.Item>
-                <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Pet's Picture for Report</p> 
+                      {/* lost and found pet picture */}
+                {/* <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Pet's Picture for Report</p> 
                 <Form.Item
                   name="pet picture"
                   rules={[{ required: true, message: 'Please upload picture' }]}>
@@ -462,7 +598,7 @@ export const Navbar = () => {
                   type="file"  
                   accept="image/png, image/svg, image/jpg, image/jpeg"
                 />
-              </Form.Item>
+              </Form.Item> */}
               <div className='flex justify-around pr-12 pt-2' >
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                   <button htmlType="submit" className='rounded-full text-[#155e59] text-md px-6 py-2'
@@ -476,7 +612,7 @@ export const Navbar = () => {
                   </button>
                 </Form.Item>
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <button htmlType="submit" className='rounded-full bg-[#155e59] text-md text-white px-5 py-2'>
+                  <button onClick={createLAFR}  htmlType="submit" className='rounded-full bg-[#155e59] text-md text-white px-5 py-2'>
                     Submit
                   </button>
                 </Form.Item>

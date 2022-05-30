@@ -1,4 +1,3 @@
-import React, {useState} from 'react'
 import {FcSearch} from 'react-icons/fc'
 import infobg from '../assets/infobg.png'
 import {IoIosPaw} from 'react-icons/io'
@@ -10,10 +9,63 @@ import { animalDetails } from '../LandingContainer/data'
 import { Modal, Radio, Form, Input, InputNumber } from 'antd';
 import Logo from '../assets/logo.png'
 import moment from 'moment';
+import { stringify } from 'postcss';
+
+import { useState, useEffect } from "react";
+import { db } from "../firebase-config";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
+
+
+
 
 const { TextArea } = Input;
 
 const AnimalList  = () => {
+
+  const [ newPetName, setNewPetName ] = useState("");
+  const [ newPetBreed, setNewPetBreed] = useState("");
+  const [ newPetType, setNewPetType] = useState("");
+  const [ newPetGender, setNewPetGender] = useState("");
+  const [ newPetBirthdate, setNewPetBirthdate ] = useState(0);
+  const [ newPetVaccine, setNewPetVaccine] = useState("");
+  const [ newPetDescription, setNewPetDescription] = useState("");
+  const [ newOwnerName, setNewOwnerName] = useState("");
+  const [ newOwnerAddress, setNewOwnerAddress] = useState("");
+  const [ newOwnerContact, setNewOwnerContact] = useState(0);
+  
+  
+  const [user, setUsers] = useState([]);
+  const usersCollectionRef = collection(db, "AnimalList");
+
+
+  const createUser = async () => {
+    await addDoc(usersCollectionRef, { petname: String(newPetName), petbreed: String(newPetBreed),
+      pettype: String(newPetType), petgender: String(newPetGender), petbirthdate: String(newPetBirthdate),
+      petvaccine: String(newPetVaccine), petdescription: String(newPetDescription), ownername: String(newOwnerName),
+      owneraddress: String(newOwnerAddress), ownercontact: String(newOwnerContact)
+
+  });
+  };
+  const deleteUser = async (id) => {
+    const userDoc = doc(db, "AnimalProfile", id);
+    await deleteDoc(userDoc);
+  };
+
+  useEffect(() => {
+    const getUsers = async () => {
+      const data = await getDocs(usersCollectionRef);
+      setUsers(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    };
+
+    getUsers();
+  }, []);
 
     const isNotActive = 'flex items-center px-2 gap-3 text-base font-medium text-[#155e59] capitalize bg-white rounded-lg py-1 px-2 hover:text-[#d95858]'
     const buttonStyle = 'flex justify-center items-center text-white lg:mr-10 md:mr-10 mt-5 px-3 gap-3 text-base font-medium text-[#155e59] capitalize bg-white rounded-lg hover:text-[#d95858]'
@@ -159,12 +211,21 @@ const AnimalList  = () => {
                 </div>
                 
                 {/* Pet Name */}
-                <p className='text-[#2c2c2c] font-medium text-md pt-5 pb-2'> Pet Name </p> 
+                <p onChange={(event) => {
+                    setNewPetName(event.target.value);
+                  }}
+                 
+                className='text-[#2c2c2c] font-medium text-md pt-5 pb-2'> Pet Name </p> 
                 <Form.Item
                   name="name"
+                 
                   rules={[{ required: true, message: 'Please input pet name!' }]}
                 >
-                  <Input placeholder="Pet's Name" className='capitalize'/>
+                  <Input 
+                   onChange={(event) => {
+                    setNewPetName(event.target.value);
+                  }}
+                  placeholder="Pet's Name" className='capitalize'/>
                 </Form.Item>
 
                  {/* Breed */}
@@ -173,54 +234,64 @@ const AnimalList  = () => {
                   name="breed"
                   rules={[{ required: true, message: 'Please input breed! or N/A if unsure' }]}
                 >
-                  <Input placeholder="Pet's Breed" className='capitalize'/>
+                  <Input  onChange={(event) => {
+                    setNewPetBreed(event.target.value);
+                  }}
+                  placeholder="Pet's Breed" className='capitalize'/>
                 </Form.Item>
 
+          
                 {/* Pet Type */}
-                <p className='text-[#2c2c2c] font-medium text-md pt-3 pb-1'> Pet Type </p> 
+                <p className='text-[#2c2c2c] font-medium text-md pt-3 pb-1'> Pet Type</p> 
                 <Form.Item
-                name="petType"
-                rules={[{ required: true, message: 'Please select pet type' }]}
+                name="type"
+                rules={[{ required: true, message: 'Please select yes or no' }]}
                 >
-                <Radio.Group>
-                    <Radio value='cat'>Cat</Radio>
-                    <Radio value='dog'>Dog</Radio>
-                    <Radio value='other'>Other</Radio>
+                <Radio.Group  onChange={(event) => {
+                    setNewPetType(event.target.value);
+                  }}>
+                    <Radio value='Dog'>Dog</Radio>
+                    <Radio value='Cat'>Cat</Radio>
+                   
                 </Radio.Group>
                 </Form.Item>
-
+              
                 { /* Gender */ }
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Pet's Gender </p> 
                 <Form.Item
-                  name="pet gender"
-                  rules={[{ required: true, message: 'Please select gender' }]}
-                >
-                  <Radio.Group name="radiogroup">
-                    <Radio value='lost'> Male </Radio>
-                    <Radio value='found'> Female</Radio>
-                    <Radio value='unsure'> Unsure</Radio>
-                  </Radio.Group>
+                name="pet gender"
+                rules={[{ required: true, message: 'Please input gender! or N/A if unsure' }]}
+              >
+                 <Radio.Group  onChange={(event) => {
+                    setNewPetGender(event.target.value);
+                  }}>
+                    <Radio value='Male'>Male</Radio>
+                    <Radio value='Female'>Female</Radio>
+                   
+                </Radio.Group>
                 </Form.Item>
 
                  {/* Birthdate */}
                 <p className='text-[#2c2c2c] font-medium text-md pb-2 pt-2'> Pet's Birthdate </p> 
                 <Form.Item
-                    name="birthdate"
+                    name="petday"
                     rules={[{ required: true, message: 'Please select birthdate' }]}
                 >
-                    <DatePicker format='MM-DD-YYYY' disabledDate={(current) => {
-                        let customDate = moment().format("MM-DD-YYYY");
-                        return current && current > moment(customDate, "MM-DD-YYYY");
-                        }} />
+                  <Input onChange={(event) => {
+                    setNewPetBirthdate(event.target.value);
+                  }}
+                   placeholder="Birthdate" type="date"/>
                 </Form.Item>
 
-                {/* Pet Type */}
+                {/* Pet Vaccine */}
                 <p className='text-[#2c2c2c] font-medium text-md pt-3 pb-1'> Has Vaccinated? </p> 
                 <Form.Item
                 name="hasVaccinated"
-                rules={[{ required: true, message: 'Please select yes or no' }]}
-                >
-                <Radio.Group>
+                rules={[{ required: true, message: 'Please input gender! or N/A if unsure' }]}
+              >
+               <Radio.Group  onChange={(event) => {
+                    setNewPetVaccine(event.target.value);
+                  }}>
                     <Radio value='Yes'>Yes</Radio>
                     <Radio value='No'>No</Radio>
                     <Radio value='Unsure'>Unsure</Radio>
@@ -232,7 +303,10 @@ const AnimalList  = () => {
                 <Form.Item
                   name="description"
                 >
-                  <TextArea placeholder="Pet's Description (For Unique Identification)" />
+                  <TextArea onChange={(event) => {
+                    setNewPetDescription(event.target.value);
+                  }}
+                   placeholder="Pet's Description (For Unique Identification)" />
                 </Form.Item>
 
                  {/* Owner Name */}
@@ -241,7 +315,10 @@ const AnimalList  = () => {
                   name="owner"
                   rules={[{ required: true, message: 'Please input owner name!' }]}
                 >
-                  <Input placeholder="Owners's Name" className='capitalize'/>
+                  <Input onChange={(event) => {
+                    setNewOwnerName(event.target.value);
+                  }}
+                  placeholder="Owners's Name" className='capitalize'/>
                 </Form.Item>
 
                  {/* Owner Address */}
@@ -250,27 +327,35 @@ const AnimalList  = () => {
                   name="address"
                   rules={[{ required: true, message: 'Please input owner address!' }]}
                 >
-                  <Input.TextArea placeholder="Owners's Address" className='capitalize'/>
+                  <Input.TextArea onChange={(event) => {
+                    setNewOwnerAddress(event.target.value);
+                  }}
+                  placeholder="Owners's Address" className='capitalize'/>
                 </Form.Item>
 
                 { /* Owner Contact */}
 
-                <p className='text-[#2c2c2c] font-medium text-md pb-1'> Contact Number (for Updates) </p> 
+                <p className='text-[#2c2c2c] font-medium text-md pb-1'> Contact Number (for Updates) </p>               
                 <Form.Item
                   name="contact"
                   rules={[{ required: true, message: 'Please input contact!' }]}
                 >
-                  <InputNumber type="numbers" 
+                  <Input onChange={(event) => {
+                    setNewOwnerContact(event.target.value);
+                  }}
+                  
+                    type="numbers" 
                     style={{ width: '100%' }} 
                     minLength="11"
                     placeholder='Contact No'
-                    controls={false}
-                    maxLength="11"/>
+                    
+                    maxLength="11"
+                    />
                 </Form.Item>
                 <div className='flex justify-around pr-12 pt-2' >
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                   <button htmlType="submit" className='rounded-full text-[#155e59] hover:text-white hover:bg-[#155e59] text-md px-6 py-2'
-                    onClick={handleOk} 
+                
                     style={{ 
                       borderWidth: '0.5px',
                       borderColor: '#155e59'
@@ -280,7 +365,8 @@ const AnimalList  = () => {
                   </button>
                 </Form.Item>
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <button htmlType="submit" className='rounded-full bg-[#155e59] text-md text-white px-5 py-2 hover:bg-[#d95858]'>
+                  <button onClick={createUser} 
+                  htmlType="submit" className='rounded-full bg-[#155e59] text-md text-white px-5 py-2 hover:bg-[#d95858]'>
                     Add
                   </button>
                 </Form.Item>
@@ -291,4 +377,5 @@ const AnimalList  = () => {
     </>
      )
 }
+
 export default AnimalList;

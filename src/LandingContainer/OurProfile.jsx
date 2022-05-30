@@ -14,7 +14,7 @@ import bgKerwin from '../assets/profile/bgKerwin.jpg'
 import bgJhay from '../assets/profile/bgJhay.jpg'
 import bgCad from '../assets/profile/bgCad.jpg'
 import bgKenneth from '../assets/profile/bgKenneth.jpg'
-import LesterProfile from '../assets/profile/LesterProfile.png'
+// import LesterProfile from '../assets/profile/LesterProfile.png'
 import EnricoProfile from '../assets/profile/EnricoProfile.png'
 import EdrieProfile from '../assets/profile/EdrieProfile.png'
 import KerwinProfile from '../assets/profile/KerwinProfile.png'
@@ -28,24 +28,24 @@ export const OurProfile = () => {
 
     /* Lester Style */
 
-    const [lesterModal, setLesterModal] = useState(false);
+    // const [lesterModal, setLesterModal] = useState(false);
 
-      const showLester = () => {
-        setLesterModal(true);
-      };
+    //   const showLester = () => {
+    //     setLesterModal(true);
+    //   };
     
-      const lesterCancel = () => {
-        setLesterModal(false);
-      };
+    //   const lesterCancel = () => {
+    //     setLesterModal(false);
+    //   };
 
-    const lesterStyle = {
-        color: '#fff',
-        textAlign: 'center',
-        backgroundImage: `url(${bgMark})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        height: '450px'
-      };
+    // const lesterStyle = {
+    //     color: '#fff',
+    //     textAlign: 'center',
+    //     backgroundImage: `url(${bgMark})`,
+    //     backgroundSize: 'cover',
+    //     backgroundPosition: 'center',
+    //     height: '450px'
+    //   };
 
       
     /* Enrico Style */
@@ -203,7 +203,7 @@ export const OurProfile = () => {
         </div>
             <div className='py-1 mb-10 px-1 border-white border-2'> 
                 <Carousel effect='fade' >
-                    <div>
+                    {/* <div>
                         <h3 className='flex justify-center items-center text-center' style={lesterStyle}>
                             <Card 
                                 className=" mx-12 my-5 overflow-hidden rounded-lg"
@@ -216,7 +216,7 @@ export const OurProfile = () => {
                                 <p className='text-[#d95858] text-md font-semibold'> UX & UI Designer/Lead Programmer </p> 
                             </Card>
                         </h3>
-                    </div>
+                    </div> */}
                     <div>
                         <h3 className='flex justify-center items-center text-center' style={edrieStyle}>
                             <Card 
@@ -241,7 +241,7 @@ export const OurProfile = () => {
                                 >
                                 <img src={EnricoProfile} alt='enrico-profile' width="305px" /> 
                                 <p className='text-[#155e59] text-2xl font-semibold'> Enrico Ramos </p>  
-                                <p className='text-[#d95858] text-md font-semibold'> Front-End Developer/Documenter </p> 
+                                <p className='text-[#d95858] text-md font-semibold'> Backend Developer/Documenter </p> 
                             </Card>
                         </h3>
                     </div>
@@ -315,7 +315,7 @@ export const OurProfile = () => {
         {/* Modal */}
 
         {/* Lester Modal */}
-        <Modal 
+        {/* <Modal 
             title={false} 
             footer={false} 
             visible={lesterModal}  
@@ -347,7 +347,7 @@ export const OurProfile = () => {
                     </a>
                 </div>
             </div>
-         </Modal>
+         </Modal> */}
 
         {/* Enrico Modal */}
         <Modal 
