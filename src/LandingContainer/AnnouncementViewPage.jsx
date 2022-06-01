@@ -1,11 +1,25 @@
-import React from 'react'
+import React, { useState, useEffect} from 'react'
 import {NavLink} from 'react-router-dom'
 import bone from '../assets/bone.png'
 import AnnouncementCards from './AnnouncementCards' 
 import {announcementData} from './data'
+import { db } from '../firebase-config';
+import { collection, getDocs } from 'firebase/firestore'
 
    
 export const AnnouncementViewPage = () => {
+  const [users, setUsers] = useState([]);
+  const usersCollectionRef = collection(db, "Announcement");
+
+  useEffect(() => {
+
+    const getAnnouncement = async () => {
+      const data = await getDocs(usersCollectionRef);
+      setUsers(data.docs.map((doc) => ({...doc.data(), id: doc.id})));
+    }
+
+    getAnnouncement()
+  }, [])
 
   return (
     <>
@@ -34,7 +48,7 @@ export const AnnouncementViewPage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-10 w-full mx-auto px-4 pt-4" style={{
         maxWidth: '1400px'
       }}>
-        { announcementData.map((user) => (
+        { users.map((user) => (
             <>
             <AnnouncementCards ann={user} key={user.id}/>
           </>

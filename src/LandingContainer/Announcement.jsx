@@ -1,10 +1,26 @@
-import React from 'react'
+import React, { useState,useEffect } from 'react'
 import {Link} from 'react-router-dom'
 import bone from '../assets/bone.png'
 import { announcementData } from './data';
 import AnnouncementCards from './AnnouncementCards'
+import { db } from '../firebase-config';
+import { collection, getDocs } from 'firebase/firestore'
 
 export const Announcement = () => {
+
+  const [users, setUsers] = useState([]);
+  const usersCollectionRef = collection(db, "Announcement");
+
+  useEffect(() => {
+
+    const getAnnouncement = async () => {
+      const data = await getDocs(usersCollectionRef);
+      setUsers(data.docs.map((doc) => ({...doc.data(), id: doc.id})));
+    }
+
+    getAnnouncement()
+  }, [])
+
   return (
     <>
     <div className='pb-5' id='announcement'>
@@ -25,7 +41,7 @@ export const Announcement = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-10 w-full mx-auto px-4" style={{
           maxWidth: '1400px'
         }}>
-          { announcementData.slice(0,4).map((user) => (
+          { users.slice(0,4).map((user) => (
               <>
               <AnnouncementCards ann={user} key={user.id}/>
             </>

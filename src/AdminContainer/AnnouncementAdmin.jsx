@@ -200,10 +200,13 @@ const AnnouncementAdmin  = () => {
                    {users.map((user) => { 
                     return (
                     <div className='shadow-lg m-10 p-5 w-1/4 '>
-                      <h2>Title: {user.Title}</h2>
-                      <h4>Author: {user.Author}</h4>
-                      <h4>Details: {user.Details}</h4>
-                      <button onClick={() => {deleteAnnouncement(user.id); showPromiseConfirmDelete(); }}>Delete</button>
+                      <img/>
+                      <h2 className='font-bold'>Title: </h2><p>{user.Title}</p>
+                      <h4 className='font-bold'>Author: </h4> <p>{user.Author}</p>
+                      <h4 className='font-bold'>Details: </h4><p>{user.Details}</p>
+                      <h4 className='font-bold'>Time: </h4><p>{user.time}</p>
+                      <button className=' p-2 shadow-xl rounded-lg bg-slate-200 mt-2'
+                      onClick={() => {deleteAnnouncement(user.id); showPromiseConfirmDelete(); }}>Delete</button>
                     </div>
                     );
                   })}
