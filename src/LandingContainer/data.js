@@ -98,10 +98,10 @@ export const vaccinated2 = [
 
 
   export const animalDetails = [
-    {id: 1, img:profile01, name: 'Bulldog', breed: 'Unknown', age:1, birthdate: '1976-04-19T12:59-0500', hasVaccinated: 'yes', petType:'dog', details: 'Always angry', gender: 'male', owner:'N/A', address:'N/A', contact:'N/A'},
-    {id: 2, img:profile02, name: 'Chuchu', breed: 'Chihuahua', age:2, birthdate: '12-23-2020', hasVaccinated: 'no', petType:'dog', details: 'Small Dog', gender: 'female', owner:'Alwhin Mateo', address:'Tondo, Manila', contact:'09123456789'},
-    {id: 3, img:profile03, name: 'Chi', breed: 'Husky', age:2, birthdate: '11-22-2019', hasVaccinated: 'yes', petType:'dog', details: 'White with Scars in Neck', gender: 'female', owner:'Ico Ramos', address:'Commonwealth, Quezon City', contact:'09123456789'},
-    {id: 4, img:profile04, name: 'Chaozi', breed: 'Unknown', age:2, birthdate: '02-29-2020', hasVaccinated: 'yes', petType:'dog', details: 'Long Ear', gender: 'male', owner:'Jinggay Ramos', address:'Sm Fairview, Quezon City', contact:'09123456789'},
-    {id: 5, img:profile05, name: 'Dal', breed: 'Dalmatian', age:2, birthdate: '03-26-2020', hasVaccinated: 'yes', petType:'dog', details: 'Has 101 dots in body', gender: 'male', owner:'Isaac Ramos', address:'Taytay, Rizal', contact:'09123456789'},
+    // {id: 1, img:profile01, name: 'Bulldog', breed: 'Unknown', age:1, birthdate: '1976-04-19T12:59-0500', hasVaccinated: 'yes', petType:'dog', details: 'Always angry', gender: 'male', owner:'N/A', address:'N/A', contact:'N/A'},
+    // {id: 2, img:profile02, name: 'Chuchu', breed: 'Chihuahua', age:2, birthdate: '12-23-2020', hasVaccinated: 'no', petType:'dog', details: 'Small Dog', gender: 'female', owner:'Alwhin Mateo', address:'Tondo, Manila', contact:'09123456789'},
+    // {id: 3, img:profile03, name: 'Chi', breed: 'Husky', age:2, birthdate: '11-22-2019', hasVaccinated: 'yes', petType:'dog', details: 'White with Scars in Neck', gender: 'female', owner:'Ico Ramos', address:'Commonwealth, Quezon City', contact:'09123456789'},
+    // {id: 4, img:profile04, name: 'Chaozi', breed: 'Unknown', age:2, birthdate: '02-29-2020', hasVaccinated: 'yes', petType:'dog', details: 'Long Ear', gender: 'male', owner:'Jinggay Ramos', address:'Sm Fairview, Quezon City', contact:'09123456789'},
+    // {id: 5, img:profile05, name: 'Dal', breed: 'Dalmatian', age:2, birthdate: '03-26-2020', hasVaccinated: 'yes', petType:'dog', details: 'Has 101 dots in body', gender: 'male', owner:'Isaac Ramos', address:'Taytay, Rizal', contact:'09123456789'},
 
   ]

@@ -23,6 +23,7 @@ import {
   addDoc,
   updateDoc,
   doc,
+  serverTimestamp
 } from "firebase/firestore";
 
 
@@ -81,6 +82,7 @@ export const Navbar = () => {
 
 
 //  LOST AND FOUND DB
+const { confirm } = Modal;
 
 const [ newLAFowner, setNewLAFowner ] = useState("");
 const [ newLAFstatus, setNewLAFstatus ] = useState("");
@@ -96,12 +98,28 @@ const [ newLAFpetgender, setNewLAFpetgender ] = useState("");
 
   const createLAFR = async () => {
     await addDoc(usersCollectionRef, { LAFowner: String(newLAFowner), LAFstatus: String(newLAFstatus), LAFseen: String(newLAFseen), LAFemail: String(newLAFemail),
-      LAFcontactnumber: String(newLAFcontactnumber), LAFpetname: String(newLAFpetname), LAFpetdescription: String(newLAFpetdescription), LAFpetgender: String(newLAFpetgender)
+      LAFcontactnumber: String(newLAFcontactnumber), LAFpetname: String(newLAFpetname), LAFpetdescription: String(newLAFpetdescription), LAFpetgender: String(newLAFpetgender),
+      timestamp: serverTimestamp()
 
   });
   };
 
-
+      // For Confirmation in Addition
+      function showLAFconfirm() {
+        confirm({
+          title: <> <div className='flex'> <IoIosPaw size={25} color="#155e59" /><p className='pl-2'> Do you want to report it? </p> </div> </> ,
+          icon: false,
+          onOk() {
+            return new Promise((resolve, reject) => {
+              setIsModalVisible(false)
+              setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+              window.location.reload(true);
+            }).catch(() => console.log('Oops errors!'));
+              
+          },
+          onCancel() {},
+        });
+      }
 
 
   useEffect(() => {
@@ -612,7 +630,7 @@ const [ newLAFpetgender, setNewLAFpetgender ] = useState("");
                   </button>
                 </Form.Item>
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <button onClick={createLAFR}  htmlType="submit" className='rounded-full bg-[#155e59] text-md text-white px-5 py-2'>
+                  <button onClick={() => { createLAFR(); showLAFconfirm(); }}  htmlType="submit" className='rounded-full bg-[#155e59] text-md text-white px-5 py-2'>
                     Submit
                   </button>
                 </Form.Item>

@@ -185,22 +185,24 @@ const AnnouncementAdmin  = () => {
                         </Link>
                     </Dropdown>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mx-auto px-10 lg:ml-5 md:ml-2 py-6 mt-10" style={{
+                {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mx-auto px-10 lg:ml-5 md:ml-2 py-6 mt-10" style={{
                     maxWidth: '1400px'
-                }}>
+                }}> */}
+                
                               {/* { announcementData.slice(0,4).map((user) => (
                                   <>
                                   <AnnouncementCards ann={user} key={user.id}/>
                                   </>
                                   ))}
                               */}
+                      <div>
+          <div className='flex  flex-wrap justify-start'>
                    {users.map((user) => { 
                     return (
-                    <div> 
+                    <div className='shadow-lg m-10 p-5 w-1/4 '>
                       <h2>Title: {user.Title}</h2>
                       <h4>Author: {user.Author}</h4>
                       <h4>Details: {user.Details}</h4>
-                      <h4>Date: {user.Date}</h4>
                       <button onClick={() => {deleteAnnouncement(user.id); showPromiseConfirmDelete(); }}>Delete</button>
                     </div>
                     );
@@ -208,7 +210,7 @@ const AnnouncementAdmin  = () => {
                     </div>
                 </div>
         </div>
-
+        </div>
         { /* Modal Add Animal */}
                 <Modal 
                       title={false} 
@@ -287,7 +289,8 @@ const AnnouncementAdmin  = () => {
                   </button>
                 </Form.Item>
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <button htmlType="submit" className='rounded-full bg-[#155e59] text-md text-white px-5 py-2 hover:bg-[#d95858]' onClick={() => { createAnnouncement(); showPromiseConfirm(); }}>
+                  <button htmlType="submit" className='rounded-full bg-[#155e59] text-md text-white px-5 py-2 hover:bg-[#d95858]' 
+                  onClick={() => { createAnnouncement(); showPromiseConfirm(); }}>
                     Add
                   </button>
                 </Form.Item>

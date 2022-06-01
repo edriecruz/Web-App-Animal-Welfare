@@ -29,6 +29,8 @@ const { TextArea } = Input;
 
 const AnimalList  = () => {
 
+  const { confirm } = Modal;
+
   const [ newPetName, setNewPetName ] = useState("");
   const [ newPetBreed, setNewPetBreed] = useState("");
   const [ newPetType, setNewPetType] = useState("");
@@ -41,9 +43,26 @@ const AnimalList  = () => {
   const [ newOwnerContact, setNewOwnerContact] = useState(0);
   
   
-  const [user, setUsers] = useState([]);
+  const [users, setUsers] = useState([]);
   const usersCollectionRef = collection(db, "AnimalList");
 
+      // For Confirmation in Addition
+      function showListconfirm() {
+        confirm({
+          title: <> <div className='flex'> <IoIosPaw size={25} color="#155e59" /><p className='pl-2'> Add animal? </p> </div> </> ,
+          icon: false,
+          onOk() {
+            return new Promise((resolve, reject) => {
+              setIsModalVisible(false)
+              setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+              window.location.reload(false);
+            }).catch(() => console.log('Oops errors!'));
+              
+          },
+          onCancel() {},
+        });
+      }
+    
 
   const createUser = async () => {
     await addDoc(usersCollectionRef, { petname: String(newPetName), petbreed: String(newPetBreed),
@@ -132,7 +151,7 @@ const AnimalList  = () => {
 
 
   return (
-     
+
      <>
        < div className='min-w-screen'>
             <div className="bg-[#155e59] h-64 shadow-lg"  
@@ -365,7 +384,7 @@ const AnimalList  = () => {
                   </button>
                 </Form.Item>
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <button onClick={createUser} 
+                  <button  onClick={() => { createUser(); showListconfirm(); }} 
                   htmlType="submit" className='rounded-full bg-[#155e59] text-md text-white px-5 py-2 hover:bg-[#d95858]'>
                     Add
                   </button>
@@ -374,8 +393,32 @@ const AnimalList  = () => {
                 </Form>
                   </>
                 </Modal>
+
+<div className='flex  flex-wrap justify-start'>
+        {users.map((user) => (
+    
+        <div className='shadow-lg m-10 p-5 w-1/4 '>
+        <h4>Pet Name: {user.petname}</h4>
+        <h4>Pet Breed: {user.petbreed}</h4>
+        <h4>Pet Type: {user.pettype}</h4>
+        <h4>Pet Gender: {user.petgender}</h4>
+        <h4>Pet Birthdate: {user.petbirthdate}</h4>
+        <h4>Pet Vaccination: {user.petvaccine}</h4>
+        <h4>Pet Description: {user.petdescription}</h4>
+        <h4>Owner's Name: {user.ownername}</h4>
+        <h4>Owner's Address: {user.owneraddress}</h4>
+        <h4>Owner's Contact: {user.ownercontact}</h4>
+        </div>
+     
+      
+      
+  ))}
+  </div>
     </>
+
+
      )
+    
 }
 
 export default AnimalList;
