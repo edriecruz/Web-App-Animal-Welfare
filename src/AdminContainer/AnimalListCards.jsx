@@ -1,9 +1,12 @@
 import React, {useState} from 'react'
-import {AiFillCalendar} from 'react-icons/ai'
 import {IoIosPaw} from 'react-icons/io'
+import {FaSadTear} from 'react-icons/fa'
 import { Modal, Radio, Form, Input, InputNumber, DatePicker  } from 'antd';
 import Logo from '../assets/logo.png'
 import moment from 'moment';
+import { db, storage } from '../firebase-config'
+import {doc, deleteDoc} from 'firebase/firestore'
+import { deleteObject, ref } from 'firebase/storage';
 
 const { confirm } = Modal;
 
@@ -13,6 +16,7 @@ const { TextArea } = Input;
 export const AnimalListCards = ({details}) => {
     
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false)
   const [updateModal, setUpdateModal] = useState(false);
 
   const showModal = () => {
@@ -29,62 +33,61 @@ export const AnimalListCards = ({details}) => {
 
   const showUpdate = () => {
     setUpdateModal(true);
-};
+  };
 
-const okUpdate = () => {
-    setUpdateModal(false);
-};
+  const okUpdate = () => {
+      setUpdateModal(false);
+  };
 
-const cancelUpdate = () => {
-    setUpdateModal(false);
-};
+  const cancelUpdate = () => {
+      setUpdateModal(false);
+  };
 
-function showPromiseConfirm() {
-  confirm({
-    title: <> <div className='flex'> <IoIosPaw size={25} color="#155e59" /><p className='pl-2'> Do you really want to update these items? </p> </div> </> ,
-    icon: false,
-    onOk() {
-      return new Promise((resolve, reject) => {
-        setUpdateModal(false)
-        setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-      }).catch(() => console.log('Oops errors!'));
-        
-    },
-    onCancel() {},
-  });
-}
+  const removePet = id => {
+    setLoading(true)
+    const desertRef = ref(storage, `/AnimalProfileImg/${details.petId}`)
+    
+    setTimeout(() => {
+      deleteDoc(doc(db, "Animal_Profile", id))
+      deleteObject(desertRef).then(()=>{
+        console.log('Image Deleted')
+      })
+      .catch((error)=>{
+        console.log("Error Deleting")
+      })
+      setLoading(false)
+    }, 2000)
+  }
 
-function showDeleteConfirm() {
-  confirm({
-    title: 'Are you sure delete this profile?',
-    icon: false,
-    content: 'It will delete forever',
-    okText: 'Yes',
-    okType: 'danger',
-    cancelText: 'No',
-    onOk() {
-      console.log('OK');
-      setIsModalVisible(false)
-    },
-    onCancel() {
-      console.log('Cancel');
-    },
-  });
-}
+  function showPromiseConfirm() {
+    confirm({
+      title: <> <div className='flex'> <IoIosPaw size={25} color="#155e59" /><p className='pl-2'> Do you really want to update these items? </p> </div> </> ,
+      icon: false,
+      onOk() {
+        return new Promise((resolve, reject) => {
+          setUpdateModal(false)
+          setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+        }).catch(() => console.log('Oops errors!'));
+          
+      },
+      onCancel() {},
+    });
+  }
+
     return (
         <>
-    <div className='basis-1/3 border bg-white shadow-2xl'>
-    <img src={details.img} alt='lost' className='rounded-md' width='400px' />
+    <div className='border bg-white shadow-2xl' key={details.id}>
+      <img src={details.imageUrl} alt='pet' className='rounded-md w-full h-3/5' />
     <div className='w-3/4 py-3 flex flex-col pl-5'>
-      <h1 className='text-[#d95858] lg:text-2xl md:text-base font-bold'>
-      {details.name}</h1>
-      <p className='text-base text-[#155e59] '>
-      {details.owner}
+      <h1 className='text-[#d95858] lg:text-2xl md:text-base font-bold capitalize'>
+      {details.petName}</h1>
+      <p className='lg:text-sm md:text-xs text-[#155e59] md:truncate capitalize '>
+      {details.ownerName}
       </p>
         <button 
         onClick={showModal}
         className="flex text-[#d95858] font-bold hover:text-[#155e59] pt-8 pb-6 lg:text-base md:text-xs md:font-medium">
-        <p className='pt-1'> Read Info </p> 
+        <p className='pt-1 pb-2'> Read Info </p> 
         <IoIosPaw size='30px' className="pb-2 lg:mt-1.5 md:hidden xsm:mt-1 hover:text-[#155e59]"/>
         </button>
     </div>
@@ -104,41 +107,44 @@ function showDeleteConfirm() {
                           
                       <div className='flex flex-col justify-start items-left text-left py-3 px-3'>
                           <div className='flex justify-center'>
-                            <p className='text-[#d95858] text-3xl font-bold tracking-wide'> {details.name} </p> 
-        
+                            <p className='text-[#d95858] text-3xl font-bold tracking-wide capitalize'> {details.petName } </p> 
+
                           </div>
                             <p className='text-[#2c2c2c] text-base font-semibold pt-5'>Animal Profile </p> 
                           <div className='grid overflow-hidden grid-cols-3 grid-rows-6 gap-1 pt-5 px-5 pb-8'>
                             <p className='box row-start-1 row-end-1 col-start-1 col-end-1 text-[#155e59] font-semibold'> Pet Type: </p> 
                             <p className='box row-start-1 row-end-1 col-start-2 col-end-4 text-[#2c2c2c] font-medium capitalize'>{details.petType} </p> 
                             <p className="box row-start-2 row-end-2 col-start-1 col-end-1 text-[#155e59] font-semibold"> Breed: </p>
-                            <p className="box row-start-2 row-end-2 col-start-2 col-end-4 text-[#2c2c2c] font-medium capitalize">{details.breed}</p>
-                            <p className="box row-start-3 row-end-3 col-start-1 col-end-1 text-[#155e59] font-semibold"> Age </p>
-                            <p className="box row-start-3 row-end-3 col-start-2 col-end-4 text-[#2c2c2c] font-medium">{details.age}</p>
+                            <p className="box row-start-2 row-end-2 col-start-2 col-end-4 text-[#2c2c2c] font-medium capitalize">{details.petBreed}</p>
+                            <p className="box row-start-3 row-end-3 col-start-1 col-end-1 text-[#155e59] font-semibold">  Pet Details: </p>
+                            <p className="box row-start-3 row-end-3 col-start-2 col-end-4 text-[#2c2c2c] font-medium capitalize"> {details.petDetails}</p>
                             <p className="box row-start-4 row-end-4 col-start-1 col-end-1 text-[#155e59] font-semibold">Birthdate: </p>
-                            <p className="box row-start-4 row-end-4 col-start-2 col-end-4 text-[#2c2c2c] font-medium capitalize">{details.birthdate}</p>
+                            <p className="box row-start-4 row-end-4 col-start-2 col-end-4 text-[#2c2c2c] font-medium capitalize">{details.petBirthdate}</p>
                             <p className="box row-start-5 row-end-5 col-start-1 col-end-1 text-[#155e59] font-semibold">Gender </p>
-                            <p className="box row-start-5 row-end-5 col-start-2 col-end-4 text-[#2c2c2c] font-medium capitalize">{details.gender}</p>
-                            <p className="box row-start-6 row-end-6 col-start-1 col-end-1 text-[#155e59] font-semibold">Gender: </p>
-                            <p className="box row-start-6 row-end-6 col-start-2 col-end-4 text-[#2c2c2c] font-medium capitalize">{details.gender}</p>
-                            <p className="box row-start-7 row-end-7 col-start-1 col-end-1 text-[#155e59] font-semibold">Pet Details:</p>
-                            <p className="box row-start-7 row-end-7 col-start-2 col-end-4 text-[#2c2c2c] font-medium text-justify capitalize">{details.details}</p>
-                            <p className="box row-start-8 row-end-8 col-start-1 col-end-1 text-[#155e59] font-semibold"> Vaccinated: </p>
-                            <p className="box row-start-8 row-end-8 col-start-2 col-end-4 text-[#2c2c2c] font-medium text-justify capitalize">{details.hasVaccinated}</p>
+                            <p className="box row-start-5 row-end-5 col-start-2 col-end-4 text-[#2c2c2c] font-medium capitalize">{details.petGender}</p>
+                            <p className="box row-start-6 row-end-6 col-start-1 col-end-1 text-[#155e59] font-semibold"> Has Vaccinated:</p>
+                            <p className="box row-start-6 row-end-6 col-start-2 col-end-4 text-[#2c2c2c] font-medium text-justify capitalize">{details.hasVaccinated}</p>
+                            <p className="box row-start-7 row-end-7 col-start-1 col-end-1 text-[#155e59] font-semibold"> Pet Vaccine: </p>
+                            <p className="box row-start-7 row-end-7 col-start-2 col-end-4 text-[#2c2c2c] font-medium text-justify capitalize">{details.petVaccine}</p>
+                            <p className="box row-start-8 row-end-8 col-start-1 col-end-1 text-[#155e59] font-semibold"> Pet ID: </p>
+                            <p className="box row-start-8 row-end-8 col-start-2 col-end-4 text-[#2c2c2c] font-medium text-justify">{details.petId}</p>
                           </div>
                           <p className='text-[#2c2c2c] text-base font-semibold'>Owner Profile </p> 
                           <div className='grid overflow-hidden grid-cols-3 grid-rows-4 gap-1 pt-5 px-5 pb-5'>
                             <p className='box row-start-1 row-end-1 col-start-1 col-end-1 text-[#155e59] font-semibold'> Owner: </p> 
-                            <p className='box row-start-1 row-end-1 col-start-2 col-end-4 text-[#2c2c2c] font-medium capitalize'>{details.owner} </p> 
+                            <p className='box row-start-1 row-end-1 col-start-2 col-end-4 text-[#2c2c2c] font-medium capitalize'>{details.ownerName} </p> 
                             <p className="box row-start-2 row-end-2 col-start-1 col-end-1 text-[#155e59] font-semibold"> Owner's Address: </p>
-                            <p className="box row-start-2 row-end-2 col-start-2 col-end-4 text-[#2c2c2c] font-medium capitalize">{details.address}</p>
+                            <p className="box row-start-2 row-end-2 col-start-2 col-end-4 text-[#2c2c2c] font-medium capitalize">{details.ownerAddress}</p>
                             <p className="box row-start-3 row-end-3 col-start-1 col-end-1 text-[#155e59] font-semibold"> Owner's Contact </p>
-                            <p className="box row-start-3 row-end-3 col-start-2 col-end-4 text-[#2c2c2c] font-medium">{details.contact}</p>
+                            <p className="box row-start-3 row-end-3 col-start-2 col-end-4 text-[#2c2c2c] font-medium">{details.ownerContact}</p>
                           </div>
-                            <img src={details.img} alt='lostfound-profile' className='py-2 rounded-lg shadow-2xl'></img>
+                            <img src={details.imageUrl} alt='lostfound-profile'className='py-2 rounded-lg shadow-2xl'></img>
                           <div className='flex justify-around pt-10' >
-                          <button htmlType="submit" className='rounded-full text-white bg-red-700 hover:text-white hover:bg-[#155e59] text-md px-6 py-2'
-                            onClick={showDeleteConfirm} 
+                          <button htmlType="submit" className={ loading ? 
+                          'rounded-full text-white bg-red-700 hover:text-white opacity-50 cursor-not-allowed hover:bg-[#155e59] text-md px-6 py-2'
+                          :
+                          'rounded-full text-white bg-red-700 hover:text-white hover:bg-[#155e59] text-md px-6 py-2'}
+                            onClick={() => removePet(details.id)} 
                             >
                             Delete
                           </button>

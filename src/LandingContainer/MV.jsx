@@ -9,7 +9,7 @@ export const MV = () => {
                     Mission
                 </h1>
                 <p  className="text-center text-lg">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae ex quis quam consectetur cursus vitae eget nulla. Duis at urna sit amet ipsum auctor ornare.
+                    Committed to improve the lives of animals in the community.
                 </p>
             </div>
             <div className=" flex flex-col items-center w-96 space-y-8 ">
@@ -17,7 +17,7 @@ export const MV = () => {
                     Vision
                 </h1>
                 <p className=" text-center text-lg">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae ex quis quam consectetur cursus vitae eget nulla. Duis at urna sit amet ipsum auctor ornare.
+                Protecting Animals, Positive Interaction and Cruelty ceased to exist
                 </p>
             </div>
         </div>
@@ -27,7 +27,7 @@ export const MV = () => {
                         Mission
                     </h1>
                     <p  className="text-center text-sm px-8">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae ex quis quam consectetur cursus vitae eget nulla. Duis at urna sit amet ipsum auctor ornare.
+                    Committed to improve the lives of animals in the community.
                     </p>
             </div>
             <div className=" flex flex-col items-center w-96 space-y-8 mt-4">
@@ -35,7 +35,7 @@ export const MV = () => {
                         Vision
                     </h1>
                     <p className=" text-center text-sm px-8">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vitae ex quis quam consectetur cursus vitae eget nulla. Duis at urna sit amet ipsum auctor ornare.
+                    Protecting Animals, Positive Interaction and Cruelty ceased to exist
                     </p>
             </div>
         </div>

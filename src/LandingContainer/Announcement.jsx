@@ -17,7 +17,7 @@ export const Announcement = () => {
                   Latest News Update
               </h1>
               <p className='text-center lg:text-base py-6 md:text-sm xsm:text-xs'>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                  The source of news from the community, connected to the concerns of Animal Welfare.
               </p>
           </div>
         </div>

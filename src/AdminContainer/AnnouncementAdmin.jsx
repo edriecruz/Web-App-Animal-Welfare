@@ -1,18 +1,29 @@
-import React, {useState} from 'react'
-import {FcSearch} from 'react-icons/fc'
+import React, {useState, useEffect} from 'react'
+import { Link } from 'react-router-dom';    
+
 import infobg from '../assets/infobg.png'
+import Logo from '../assets/logo.png'
+
+import {FcSearch} from 'react-icons/fc'
 import {IoIosPaw} from 'react-icons/io'
 import {AiFillCaretDown} from 'react-icons/ai'
-import { Link } from 'react-router-dom';    
-import { Menu, Dropdown } from 'antd';
-import { Modal, Form, Input } from 'antd';
-import Logo from '../assets/logo.png'
-import { announcementData } from '../LandingContainer/data';
+import {FaSadTear} from 'react-icons/fa'
+import {RiStarSmileFill} from 'react-icons/ri'
+
+import { Menu, Dropdown, notification, Modal, Form, Input } from 'antd';
+
 import AnnouncementCards from '../LandingContainer/AnnouncementCards'
 
+import {v4 as uuidv4} from 'uuid'
 
-const { confirm } = Modal;
+// Database
+import { db, storage } from '../firebase-config'
+import {collection, onSnapshot, doc, addDoc, serverTimestamp, orderBy} from 'firebase/firestore'
+import {ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+
 const { TextArea } = Input;
+
+const announcementId = uuidv4().slice(0,5)
 
 const AnnouncementAdmin  = () => {
 
@@ -66,6 +77,18 @@ const AnnouncementAdmin  = () => {
       );
 
       const [isModalVisible, setIsModalVisible] = useState(false);
+      const [loading, setLoading] = useState(false);
+      const [Announcement, setAnnouncement] = useState([])
+      const [image, setImage] = useState(null)
+      const [form, setForm] = useState({
+
+          announcementId: "ann" + announcementId,
+          author: '',
+          details: '',
+          title: '',
+          imageUrl: '',
+          timestamp: serverTimestamp()
+      })
 
       const showModal = () => {
           setIsModalVisible(true);
@@ -75,25 +98,94 @@ const AnnouncementAdmin  = () => {
           setIsModalVisible(false);
       };
     
-      const handleCancel = () => {
-          setIsModalVisible(false);
-      };
 
-        
-      function showPromiseConfirm() {
-        confirm({
-          title: <> <div className='flex'> <IoIosPaw size={25} color="#155e59" /><p className='pl-2'> Do you really want to add it publicly? </p> </div> </> ,
-          icon: false,
-          onOk() {
-            return new Promise((resolve, reject) => {
-              setIsModalVisible(false)
-              setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-            }).catch(() => console.log('Oops errors!'));
-              
-          },
-          onCancel() {},
-        });
+      const announcementCollectionRef = collection(db, "Announcement")
+
+      useEffect(() => {
+        onSnapshot(announcementCollectionRef, snapshot => {
+          setAnnouncement(snapshot.docs.map(doc => {
+            return{
+              id: doc.id,
+              ...doc.data()
+            }
+          }))
+        })
+      }, [])
+
+      const handleImage = e => {
+        setImage(e.target.files[0])
+      
       }
+
+      const handleSubmit = e => {
+        e.preventDefault()
+        setLoading(true)
+  
+        setTimeout(() => {
+          if (
+            !form.author ||
+            !form.details||
+            !form.title
+          ){
+            notification.open({
+              icon: <> <FaSadTear className='mt-5 text-red-500'/>   </>,
+              message:  <> <p className='text-red-500'>  Invalid Form </p> </>,
+              description:
+              'Please make sure that you have completed the entire form.',
+            });
+            
+            setLoading(false)
+            return 
+          }
+  
+          addDoc(announcementCollectionRef, form)
+  
+          const storageRef = ref(storage, `/NewsImg/${form.announcementId}`)
+          const imageUpload = uploadBytesResumable(storageRef, image)
+    
+          imageUpload.on('state_changed', 
+          (snapshot) => {
+            const progressPercent = Math.round(snapshot.bytesTransferred / snapshot.totalBytes * 100)
+          }, (err) => {
+              console.log(err)
+              setLoading(false)
+          },
+            () => {
+              getDownloadURL(imageUpload.snapshot.ref)
+                .then((url) => {
+                  console.log(url)
+                  setForm({...form, imageUrl: url})
+                  setLoading(false)
+                })
+            }
+          )
+  
+          setForm({
+            announcementId: "ann" + announcementId,
+            title: '',
+            author: '',
+            details: '',
+            timestamp: serverTimestamp()
+          })
+  
+          setLoading(false)
+          setIsModalVisible(false)
+          notification.success({
+            message: 
+                <div className='flex flex-col justify-center items-center' style={{marginLeft: "-50px"}}>
+                  <RiStarSmileFill className='my-5 text-green-500' style={{fontSize: '50px'}}/> 
+                  <p className='px-3 pb-5 text-justify text-sm'>
+                    Annoucement
+                  </p>
+                </div>,
+            icon: <> </>,
+            duration: 3,
+        });
+        }, 2000)
+      }
+
+      console.log(form)
+
 
   return (
      
@@ -140,11 +232,11 @@ const AnnouncementAdmin  = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mx-auto px-10 lg:ml-5 md:ml-2 py-6 mt-10" style={{
                     maxWidth: '1400px'
                 }}>
-                     { announcementData.slice(0,4).map((user) => (
+                     {/* { Announcement.map((user, i) => (
                         <>
                         <AnnouncementCards ann={user} key={user.id}/>
                         </>
-                        ))}
+                        ))} */}
                    
                     </div>
                 </div>
@@ -155,21 +247,13 @@ const AnnouncementAdmin  = () => {
                       title={false} 
                       footer={false}
                       visible={isModalVisible} 
-                      onOk={handleOk} 
                       closeIcon={true}
-                      onCancel={handleCancel}
                       destroyOnClose={true}
                       style={{top:'10px'}}
                       >
                   <>
-                  <Form
-                    name="basic"
-                    labelCol={{ span: 0 }}
-                    wrapperCol={{ span: 30 }}
-                    initialValues={false}
-
-                    // onFinish={onFinish}
-                    // onFinishFailed={onFinishFailed}
+                  <form
+                    onSubmit={handleSubmit}
                     autoComplete="off"
                 >
                 <div className='flex flex-col justify-center items-center text-center mt-5'>
@@ -179,11 +263,14 @@ const AnnouncementAdmin  = () => {
                 
                 {/* Title */}
                 <p className='text-[#2c2c2c] font-medium text-md pt-5 pb-2'> Announcement Title </p> 
-                <Form.Item
-                  name="title"
-                  rules={[{ required: true, message: 'Please input Announcement Title!' }]}
-                >
-                  <Input placeholder="Announcement Title" className='capitalize'/>
+                <Form.Item name="title" >
+                  <Input placeholder="Announcement Title" className='capitalize'
+                  value={form.title}
+                  disabled={loading}
+                  onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                  onChange={e => setForm({...form, title: e.target.value})}
+                
+                  />
                 </Form.Item>
 
                  {/* Author */}
@@ -192,7 +279,12 @@ const AnnouncementAdmin  = () => {
                   name="Author"
                   rules={[{ required: true, message: 'Please input the author' }]}
                 >
-                  <Input placeholder="Author" className='capitalize'/>
+                  <Input placeholder="Author" className='capitalize'
+                  value={form.author}
+                  disabled={loading}
+                  onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                  onChange={e => setForm({...form, author: e.target.value})}
+                  />
                 </Form.Item>
               
                 {/* Details */}
@@ -201,26 +293,24 @@ const AnnouncementAdmin  = () => {
                   name="details"
                   rules={[{ required: true, message: 'Please input the details' }]}
                 >
-                  <TextArea placeholder="Details" />
+                  <TextArea placeholder="Details" 
+                    value={form.details}
+                    disabled={loading}
+                    onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                    onChange={e => setForm({...form, details: e.target.value})}
+                  />
                 </Form.Item>
 
-                  
-                { /* Picture */ }
+                <div className='py-3 pb-3'>
+                  <p className='text-[#2c2c2c] font-medium text-md pb-1'> Announcement </p> 
+                  <input type='file' name='image' accept="image/*" required onChange={ handleImage }/>
+                </div>
 
-                <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Photo</p> 
-                <Form.Item
-                  name="announcement-picture"
-                  rules={[{ required: true, message: 'Please upload picture' }]}>
-                  <input 
-                  type="file"  
-                  accept="image/png, image/svg, image/jpg, image/jpeg"
-                />
-              </Form.Item>
-    
                 <div className='flex justify-around pr-12 pt-2' >
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <button htmlType="submit" className='rounded-full text-[#155e59] hover:text-white hover:bg-[#155e59] text-md px-6 py-2'
+                  <button type="button" className='rounded-full text-[#155e59] hover:text-white hover:bg-[#155e59] text-md px-6 py-2'
                     onClick={handleOk} 
+                    disabled={loading}
                     style={{ 
                       borderWidth: '0.5px',
                       borderColor: '#155e59'
@@ -229,14 +319,18 @@ const AnnouncementAdmin  = () => {
                     Cancel
                   </button>
                 </Form.Item>
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <button htmlType="submit" className='rounded-full bg-[#155e59] text-md text-white px-5 py-2 hover:bg-[#d95858]'
-                  onClick={showPromiseConfirm}>
-                    Add
+                <Form.Item>
+                  <button type="submit" 
+                  className={
+                    loading ? 
+                    'rounded-full bg-[#155e59] text-md text-white opacity-50 px-5 py-2 hover:bg-[#d95858]'
+                    :
+                    'rounded-full bg-[#155e59] text-md text-white px-5 py-2 hover:bg-[#d95858]'}>
+                    Add Announcement
                   </button>
                 </Form.Item>
               </div>
-                </Form>
+                </form>
                   </>
                 </Modal>
     </>

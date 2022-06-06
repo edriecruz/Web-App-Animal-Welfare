@@ -22,7 +22,6 @@ Secondary Color (Dark) ff7070
 const Landing = () => {
   return (
       <>
-   
               <div className='sticky top-0 left-0 right-0 z-40'> 
                 <Navbar />
                 <div className="2xl:hidden lg:absolute md:absolute sm:absolute bg-repeat bg-transparent align-top z-50" style={{marginTop:'-20px'}}>

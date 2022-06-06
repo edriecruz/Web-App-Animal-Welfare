@@ -39,7 +39,8 @@ export const Hotlines = () => {
                 <h1 className='font-bold text-[#155e59] text-4xl'>
                 Veterinary Hotlines</h1>
                 <p className='text-base text-[#2c2c2c]'>
-                    Lorem ipsum dolor sit amet adipiscing elit, dolor sit</p>
+                Urgent Emergency Hotline Rescue
+</p>
             </div>
             <div className='grid overflow-hidden grid-cols-3 grid-rows-1 gap-5 pr-4'>
 

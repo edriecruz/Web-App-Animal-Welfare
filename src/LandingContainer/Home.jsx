@@ -28,11 +28,8 @@ export const Home = () => {
                 FAMILY
             </h1>
             <p className="text-2xl text-white text-left font-thin mt-7 w-5/6 ">
-                Lorem ipsum dolor sit amet, consectetur
+                Manage Pets and Support Animal Welfare
             </p>
-            <p className="text-2xl text-white text-left font-thin mb-7 w-5/6">
-                adipiscing elit. Nunc a ex egestas, pellentesque mi vitae      
-            </p> 
             <div className='flex justify-start'>
             <Link to='info' spy={true} smooth={true} offset={-450} duration={500}
                 className="flex bg-[#155e59] text-white text-xl mt-7 md:text-2xl py-3 px-3 font-semibold rounded-md hover:bg-[#d95858] hover:text-white duration-200"

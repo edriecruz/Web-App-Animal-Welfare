@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState } from 'react'
 import logo from '../assets/logo.png'
 import Logo from '../assets/logo.png'
 import {BiLogOut} from 'react-icons/bi'
@@ -8,7 +8,6 @@ import {ImProfile} from "react-icons/im";
 import {GiAcousticMegaphone} from "react-icons/gi";
 import {AiOutlineQuestionCircle} from "react-icons/ai";
 import {MdOutlineManageAccounts} from "react-icons/md";
-import { useLocation } from 'react-router-dom';
 import { useUserContext } from '../context/userContext'
 
 import { Modal, Form } from 'antd';
@@ -17,10 +16,9 @@ import { Modal, Form } from 'antd';
 
 const Sidebar = () => {
 
-  const {logoutUser, resetPassword} = useUserContext()
-  const location = useLocation()
+  const {logoutUser, resetPassword, validating} = useUserContext()
 
-  const ActiveStyle = "flex items-center justify-center text-center border-2 border-[#155e59] my-2 text-base font-medium px-4 py-3 text-white bg-[#155e59] rounded-lg";
+  const ActiveStyle = "flex items-center hover:text-white justify-center text-center border-2 border-[#155e59] my-2 text-base font-medium px-4 py-3 text-white bg-[#155e59] rounded-lg";
   const InactiveStyle = "flex items-center justify-center text-center border-2 border-[#155e59] my-2 text-base text-gray-900 font-medium px-4 py-3 hover:text-white hover:bg-[#155e59] rounded-lg";
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -114,8 +112,11 @@ const Sidebar = () => {
           <button className='text-gray-900 hover:text-[#155e59] text-lg font-medium mt-4 py-3 rounded-lg border-t-2'
            onClick={logoutUser}>
             <div className='flex justify-center my-3'>
-              <BiLogOut className='mt-1'/>
-              <p className='pl-2'> Logout </p>
+              <BiLogOut className='mt-1'/> 
+              {
+                validating ? <p className='pl-2'> Logging out </p> :<p className='pl-2'> Logout </p> 
+
+              }
             </div>
           </button>
         </div>
@@ -151,10 +152,19 @@ const Sidebar = () => {
               <div className='flex flex-col justify-center items-center text-center pt-2' >
                 <p className='text-gray-700'> <b>Sending Password Recovery Code </b>  will send out an email to your <b>registered email address </b>, in which you might then click the link to set your new password. You will be automatically <b> logged out from the page </b> after clicking the "Send Password Recovery Code" button. </p> 
                 <Form.Item>
-                  <button htmlType="submit" className='rounded-full bg-[#155e59] text-md text-white mt-8 px-5 py-2'
+                  <button htmlType="submit" 
+                  className={
+                    validating ? 
+                    'rounded-full bg-[#155e59] opacity-50 text-md text-white mt-8 px-5 py-2'
+                    :
+                    'rounded-full bg-[#155e59] text-md text-white mt-8 px-5 py-2'}
                     onClick={resetPassword}>
-                    {location.pathname="/"}
-                    Send Password Recovery Code
+                    {
+                      validating ? 
+                      <h1 className='text-white'> Sending .... </h1>
+                      :
+                      <h1 className='text-white'> Send Password Recovery Code</h1>
+                    }
                   </button>
                 </Form.Item>
               </div>

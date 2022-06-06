@@ -13,7 +13,6 @@ import {ImMenu} from 'react-icons/im'
 import { Modal, Form, Input,  Menu, Dropdown, InputNumber, Radio,} from 'antd';
 import { Link } from 'react-scroll/modules'
 import { useUserContext } from '../context/userContext';
-import { ClipLoader } from 'react-spinners';
 const { TextArea } = Input;
 
 export const Navbar = () => {
@@ -62,8 +61,15 @@ export const Navbar = () => {
 
   //Authentication 
 
-  const { login,  setEmail, setPassword, email, password } = useUserContext();
+  const { login, validating, email, password, setEmail, setPassword} = useUserContext();
 
+  const [form] = Form.useForm();
+
+  const reset = () => {
+    form.resetFields()
+    setEmail('')
+    setPassword('')
+  }  
 
   const info = (
     <Menu style={{ padding: 0, marginTop:'15px'}}
@@ -301,7 +307,7 @@ export const Navbar = () => {
         footer={false}
         visible={lostFound}
         onClose={handleOkLostFound} 
-        onOk={handleOkLostFound} 
+        maskClosable = {false}
         width='350px'
         destroyOnClose={true}
         zIndex={1000}
@@ -313,47 +319,62 @@ export const Navbar = () => {
         <div className='flex flex-col text-2xl py-8' style={{marginBottom:'-30px'}}>
               <Form
                 name="basic"
+                form={form}
                 labelCol={{ span: 0 }}
                 wrapperCol={{ span: 30 }}
                 initialValues={false}
-                // onFinishFailed={onFinishFailed}
-                autoComplete="off"
+                autoComplete="on"
+                preserve={false}
+                onFinish={login}
               >
-                <p className='text-[#999897] text-md pb-3'> Email </p> 
-                <Form.Item
-                  name="Email"
-                  rules={[{ required: true, message: 'Please input your Email!' }]}
-			
-                >
+                <p className='text-[#999897] text-md pb-1'> Email </p> 
+                <Form.Item name="Email" rules={[{ required: true, message: 'Please input your Email!' }]}>
                   <Input 
-		  onChange={(e) => {setEmail(e.target.value)}}
-		/>
+                   onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                   onChange={(e) => {setEmail(e.target.value)}}
+                    disabled={validating || email === 'err'}
+                  />
                 </Form.Item>
-                <p className='text-[#999897] text-md pb-3'> Password </p> 
-                <Form.Item
-                  name="Password"
-                  rules={[{ required: true, message: 'Please input your Password!' }]}
-                >
+                <p className='text-[#999897] text-md pb-1 pt-3'> Password </p> 
+                <Form.Item name="Password" rules={[{ required: true, message: 'Please input your Password!' }]}>
                   <Input.Password 
-		  onChange={(e) => {setPassword(e.target.value)}} 
-		/>
+                    onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                    onChange={(e) => {setPassword(e.target.value)}}
+                    disabled={validating || password === 'err'}
+                  />
                 </Form.Item>
+
+              {password === 'err' && email === 'err' ? 
+                <>
+                  <h1 className='text-red-500 font-semibold text-center pb-5'> Incorrect Data. Please click <b> Reset </b> to clear fields  </h1>
+                </>
+                : 
+                <> </>
+              }
               <div className='flex justify-around pr-12 pt-2' >
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <button htmlType="submit" className='rounded-full text-[#155e59] text-md px-6 py-2'
-                    onClick={handleOkLostFound} 
+                  <button className='rounded-full text-[#155e59] text-md px-6 py-2'
+                    onClick={reset} 
                     style={{ 
                       borderWidth: '0.5px',
                       borderColor: '#155e59'
                       
                       }}>
-                    Cancel
+                    Reset
                   </button>
                 </Form.Item>
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <button onClick={login}  disabled={!email && !password} htmlType="submit" 
-                    className='rounded-full bg-[#155e59] text-md text-white px-5 py-2'>
-                      Login
+                  <button type='submit'
+                    disabled={email === 'err' && password === 'err'}
+                    className={
+                      validating ? 
+                      'rounded-full bg-[#155e59] opacity-50 text-md text-white px-5 py-2'
+                      :
+                      'rounded-full bg-[#155e59] hover:bg-[#d95858] text-md text-white px-5 py-2'}>
+                     {validating ? 
+                      'Logging'
+                      :
+                      'Login'}
                   </button>
                 </Form.Item>
               </div>

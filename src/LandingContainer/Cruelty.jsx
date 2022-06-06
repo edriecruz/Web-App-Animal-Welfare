@@ -25,7 +25,8 @@ export const Cruelty = () => {
             <h1 className='text-[#155e59] lg-text-4xl font-extrabold py-5 mt-5 md:text-2xl xsm:text-base'>
             Guidance Regarding Cruelty</h1>
             <p className='text-center lg:text-base md:text-sm lg:mb-20 md:mb-20'>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
+            Animal cruelty is a crime against animals, eliminating their right to live. This is guidance to detach us from any crimes that may be involved in animal cruelty.
+</p>
         </div>
 
         {/*Content*/}
