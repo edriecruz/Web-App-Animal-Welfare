@@ -1,11 +1,28 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import {NavLink} from 'react-router-dom'
 import bone from '../assets/bone.png'
 import AnnouncementCards from './AnnouncementCards' 
-import {announcementData} from './data'
+import { db } from '../firebase-config'
+import {collection, onSnapshot,  orderBy, query} from 'firebase/firestore'
 
    
 export const AnnouncementViewPage = () => {
+
+  const [Announcement, setAnnouncement] = useState([])
+  const announcementCollectionRef = collection(db, "Announcement")
+
+  useEffect(() => {
+    const q = query(announcementCollectionRef, orderBy("dateCreated", "desc"));
+    onSnapshot(q, announcementCollectionRef, snapshot => {
+      setAnnouncement(snapshot.docs.map(doc => {
+        return{
+          id: doc.id,
+          ...doc.data()
+        }
+      }))
+    })
+  }, [])
+
 
   return (
     <>
@@ -31,10 +48,10 @@ export const AnnouncementViewPage = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-10 w-full mx-auto px-4 pt-4" style={{
+      <div className="py-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-10 w-full mx-auto px-4 pt-4" style={{
         maxWidth: '1400px'
       }}>
-        { announcementData.map((user) => (
+        { Announcement.map((user) => (
             <>
             <AnnouncementCards ann={user} key={user.id}/>
           </>

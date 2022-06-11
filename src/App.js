@@ -23,8 +23,7 @@ const App = () => {
   
   return (
     <>
-    {error && <Error />}
-    
+
     <div className='2xl:flex justify-center'> 
     <div className='hidden xsm:flex flex-col font-Poppins'>
     {loading ? 
@@ -41,9 +40,8 @@ const App = () => {
           <Route path="/announcement" element={<Admin display={<AnnouncementAdmin />}/>} />
         </>
         :   
-      
         <>
-
+          <Route path="/*" element={<Error />} />
           <Route path="/" element={<Landing />} />
           <Route path="/view-announcement" element={<AnnouncementViewPage />} />
           <Route path="/view-lostfound" element={<LostFoundViewPage />} />

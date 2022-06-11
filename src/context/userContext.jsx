@@ -1,7 +1,6 @@
 import { createContext, useEffect, useState, useContext } from "react";
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut, sendPasswordResetEmail} from 'firebase/auth'
 import { auth } from "../firebase-config";
-import { useLocation } from 'react-router-dom';
 
 const UserContext = createContext({})
 
@@ -9,14 +8,14 @@ export const useUserContext = () => useContext(UserContext)
 
 export const UserContextProvider = ({children}) => {
 
-    const location = useLocation();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
     const [validating, setValidating] = useState(false);
     const [message, setMessage] = useState("");
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState ('')
-
+    const [error, setError] = useState("")
+ 
     const login = async (e) => {
         setValidating(true)
         try{
@@ -35,7 +34,7 @@ export const UserContextProvider = ({children}) => {
 
             }, 2000)
         }catch(error){
-  
+            setError(error)
         }
       }
       
@@ -49,7 +48,7 @@ export const UserContextProvider = ({children}) => {
             }, 2000)
             signOut(auth)
         }catch(error){
-            alert(error.message)
+            setError(error)
         }
     }
 
@@ -67,15 +66,15 @@ export const UserContextProvider = ({children}) => {
 
     const logoutUser = () => {
         setValidating(true)
-        signOut(auth) 
         setTimeout(() =>{
             setValidating(false)
         }, 2000)
-        location('/')
+        signOut(auth) 
+        window.location.pathname = "/"
     }
 
     const contextValue = {
-        user, loading, validating, message, login, resetPassword, logoutUser,  email, password, setEmail, setPassword    };
+        error, user, loading, validating, message, login, resetPassword, logoutUser,  email, password, setEmail, setPassword    };
 
 
     return (

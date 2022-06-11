@@ -1,17 +1,31 @@
-import React from 'react'
-import {FcSearch} from 'react-icons/fc'
+import React, {useState, useEffect} from 'react'
+import { Link } from 'react-router-dom';    
+
+// Icons and Images
 import infobg from '../assets/infobg.png'
-import {IoIosPaw} from 'react-icons/io'
+import {FcSearch} from 'react-icons/fc'
 import {AiFillCaretDown} from 'react-icons/ai'
-import { Link} from 'react-router-dom';
-import { Menu, Dropdown } from 'antd';
+import {IoIosPaw} from 'react-icons/io'
+import {FaSadTear} from 'react-icons/fa'
+import {RiStarSmileFill} from 'react-icons/ri'
+
+// Misc
+import { Menu, Dropdown, DatePicker, notification} from 'antd';
+import { Modal, Radio, Form, Input } from 'antd';
+import { v4 as uuidv4 } from 'uuid';
+import moment from 'moment';
+
+// Database
+import { db, storage } from '../firebase-config'
+import {collection, onSnapshot, doc, addDoc, serverTimestamp, orderBy, query} from 'firebase/firestore'
+import {ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+
 import { lostfoundData } from '../LandingContainer/data'
 import { LostAndFoundCards } from './LostAndFoundCards'
 
 const LostandFound  = () => {
 
     const isNotActive = 'flex items-center px-2 gap-3 text-base font-medium text-[#155e59] capitalize bg-white rounded-lg py-1 px-2 hover:text-[#d95858]'
-
 
     const info = (
         <Menu style={{ padding: 0, marginTop:'15px'}}
@@ -60,6 +74,21 @@ const LostandFound  = () => {
         </Menu>
       );
     
+      const [LostAndFound, setLostAndFound] = useState([])
+      const lostAndFoundCollectionRef = collection(db, "LostAndFound")
+
+      useEffect(() => {
+        const q = query(lostAndFoundCollectionRef, orderBy("dateCreated", "desc"));
+        onSnapshot(q, lostAndFoundCollectionRef, snapshot => {
+          
+            setLostAndFound(snapshot.docs.map(doc => {
+            return{
+              id: doc.id,
+              ...doc.data()
+            }
+          }))
+        })
+      }, [])    
 
   return (
      
@@ -106,7 +135,7 @@ const LostandFound  = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mx-auto px-10 lg:ml-5 md:ml-2 py-6 mt-10" style={{
                     maxWidth: '1400px'
                 }}>
-                    {lostfoundData.map((user) => (
+                    {LostAndFound.map((user) => (
                         <>
                         <LostAndFoundCards laf={user} key={user.id}/>
                     </>

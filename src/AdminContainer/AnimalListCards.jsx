@@ -1,7 +1,8 @@
 import React, {useState} from 'react'
 import {IoIosPaw} from 'react-icons/io'
+import { Modal, Radio, Form, Input, InputNumber, DatePicker, notification  } from 'antd';
 import {FaSadTear} from 'react-icons/fa'
-import { Modal, Radio, Form, Input, InputNumber, DatePicker  } from 'antd';
+import {RiStarSmileFill} from 'react-icons/ri'
 import Logo from '../assets/logo.png'
 import moment from 'moment';
 import { db, storage } from '../firebase-config'
@@ -9,7 +10,6 @@ import {doc, deleteDoc} from 'firebase/firestore'
 import { deleteObject, ref } from 'firebase/storage';
 
 const { confirm } = Modal;
-
 
 const { TextArea } = Input;
 
@@ -43,17 +43,28 @@ export const AnimalListCards = ({details}) => {
       setUpdateModal(false);
   };
 
+  const desertRef = ref(storage, `/AnimalProfileImg/${details.petId}${details.petName}`);
+
   const removePet = id => {
     setLoading(true)
-    const desertRef = ref(storage, `/AnimalProfileImg/${details.petId}`)
     
     setTimeout(() => {
       deleteDoc(doc(db, "Animal_Profile", id))
       deleteObject(desertRef).then(()=>{
-        console.log('Image Deleted')
+        notification.open({
+          icon: <> <RiStarSmileFill className='mt-5 text-green-500'/>   </>,
+          message:  <> <p className='text-green-500'> Document Deleted </p> </>,
+          description:
+          'Your document has been deleted permanently',
+        });
       })
       .catch((error)=>{
-        console.log("Error Deleting")
+        notification.open({
+          icon: <> <FaSadTear className='mt-5 text-red-500'/>   </>,
+          message:  <> <p className='text-red-500'> Error Deleting the Documents </p> </>,
+          description:
+          'Please delete again the documents',
+        });
       })
       setLoading(false)
     }, 2000)
@@ -74,10 +85,26 @@ export const AnimalListCards = ({details}) => {
     });
   }
 
+  function showDeleteConfirm() {
+    confirm({
+      title: 'Are you sure to delete this profile?',
+      icon: false,
+      content: 'It will delete permanently',
+      okText: 'Yes',
+      okType: 'danger',
+      cancelText: 'No',
+      onOk() {
+        setIsModalVisible(false)
+        removePet(details.id)
+      },
+      onCancel() {},
+    });
+  }
+
     return (
         <>
-    <div className='border bg-white shadow-2xl' key={details.id}>
-      <img src={details.imageUrl} alt='pet' className='rounded-md w-full h-3/5' />
+    <div className='border bg-white shadow-2xl h-4/6' key={details.id}>
+      <img src={details.imageUrl} alt='pet' className='rounded-md w-full h-4/6' />
     <div className='w-3/4 py-3 flex flex-col pl-5'>
       <h1 className='text-[#d95858] lg:text-2xl md:text-base font-bold capitalize'>
       {details.petName}</h1>
@@ -86,9 +113,8 @@ export const AnimalListCards = ({details}) => {
       </p>
         <button 
         onClick={showModal}
-        className="flex text-[#d95858] font-bold hover:text-[#155e59] pt-8 pb-6 lg:text-base md:text-xs md:font-medium">
-        <p className='pt-1 pb-2'> Read Info </p> 
-        <IoIosPaw size='30px' className="pb-2 lg:mt-1.5 md:hidden xsm:mt-1 hover:text-[#155e59]"/>
+        className="flex pb-5 text-[#d95858] font-bold hover:text-[#155e59] pt-4 lg:text-base md:text-xs md:font-medium">
+        <p className='pt-1'> Read Info </p> 
         </button>
     </div>
   </div>
@@ -125,8 +151,13 @@ export const AnimalListCards = ({details}) => {
                             <p className="box row-start-6 row-end-6 col-start-1 col-end-1 text-[#155e59] font-semibold"> Has Vaccinated:</p>
                             <p className="box row-start-6 row-end-6 col-start-2 col-end-4 text-[#2c2c2c] font-medium text-justify capitalize">{details.hasVaccinated}</p>
                             <p className="box row-start-7 row-end-7 col-start-1 col-end-1 text-[#155e59] font-semibold"> Pet Vaccine: </p>
-                            <p className="box row-start-7 row-end-7 col-start-2 col-end-4 text-[#2c2c2c] font-medium text-justify capitalize">{details.petVaccine}</p>
-                            <p className="box row-start-8 row-end-8 col-start-1 col-end-1 text-[#155e59] font-semibold"> Pet ID: </p>
+                            <p className="box row-start-7 row-end-7 col-start-2 col-end-4 text-[#2c2c2c] font-medium text-justify capitalize">{
+                              details.hasVaccinated === 'Yes' ? 
+                              <p className='text-green-500'> {details.petVaccine} </p> 
+                              :
+                              <p className='text-red-500'> Not Vaccinated </p>
+                              }</p>
+                            <p className="box row-start-8 row-end-8 col-start-1 col-end-1 text-[#155e59] font-semibold"> Pet ID</p>
                             <p className="box row-start-8 row-end-8 col-start-2 col-end-4 text-[#2c2c2c] font-medium text-justify">{details.petId}</p>
                           </div>
                           <p className='text-[#2c2c2c] text-base font-semibold'>Owner Profile </p> 
@@ -144,7 +175,7 @@ export const AnimalListCards = ({details}) => {
                           'rounded-full text-white bg-red-700 hover:text-white opacity-50 cursor-not-allowed hover:bg-[#155e59] text-md px-6 py-2'
                           :
                           'rounded-full text-white bg-red-700 hover:text-white hover:bg-[#155e59] text-md px-6 py-2'}
-                            onClick={() => removePet(details.id)} 
+                            onClick={() => showDeleteConfirm()} 
                             >
                             Delete
                           </button>

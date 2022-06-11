@@ -1,19 +1,36 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
+import { Link } from 'react-scroll/modules'
+
+// Logo and Icons
 import LogoTitle from '../assets/logo-title.png'
 import Logo from '../assets/logo.png'
 import Title from '../assets/AnimalWelfare.png'
-import { Drawer } from 'antd';
-import {AiFillCaretDown} from 'react-icons/ai'
+
 import {IoIosPaw, IoIosMegaphone} from 'react-icons/io'
 import {BsMegaphoneFill} from 'react-icons/bs'
 import {CgNotes} from 'react-icons/cg'
 import {FaWpforms} from 'react-icons/fa'
 import {HiInformationCircle} from 'react-icons/hi'
 import {ImMenu} from 'react-icons/im'
-import { Modal, Form, Input,  Menu, Dropdown, InputNumber, Radio,} from 'antd';
-import { Link } from 'react-scroll/modules'
+import {FaSadTear} from 'react-icons/fa'
+import {RiStarSmileFill} from 'react-icons/ri'
+import {AiFillCaretDown} from 'react-icons/ai'
+
+// Antd
+import { Drawer, Modal, Form, Input,  Menu, Dropdown, Radio, DatePicker, notification} from 'antd';
+
+// Misc
+import { v4 as uuidv4 } from 'uuid';
+import moment from 'moment';
+
+// Database
 import { useUserContext } from '../context/userContext';
+import { db, storage } from '../firebase-config'
+import {collection, onSnapshot, doc, addDoc, serverTimestamp, Timestamp, orderBy, query} from 'firebase/firestore'
+import {ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+
 const { TextArea } = Input;
+const lostFoundId =  "laf-"+ uuidv4().slice(0,8);
 
 export const Navbar = () => {
 
@@ -57,7 +74,6 @@ export const Navbar = () => {
 
   const isNotActive = 'flex items-center px-2 gap-3 text-lg font-medium text-[#155e59] transition-all duration-200 ease-in capitalize hover:rounded-lg hover:bg-[#155e59] hover:text-white hover:px-3 hover:py-2'
   const isNotActiveDrawer = 'flex items-center justify-center py-2 my-2 gap-5 text-gray-500 transition-all duration-200 ease-in capitalize text-[#155e59] hover:bg-[#155e59] hover:text-white hover:py-2 hover:px-2'
-  // const isActiveDrawer = 'flex items-center justify-center py-2 my-2 gap-5 tracking-wide text-white bg-[#155e59] font-bold border-2 hover:text-white rounded-md border-[#155e59] transition-all duration-200 ease-in capitalize'
 
   //Authentication 
 
@@ -149,7 +165,170 @@ export const Navbar = () => {
       </Menu.Item>
     </Menu>
   );
- 
+
+  // Lost and Found Report Auth
+
+
+  const [loading, setLoading] = useState(false)
+  const [Animal_Profile, setAnimal_Profile] = useState([])
+  const [progress, setProgress] = useState(0)
+  const [image, setImage] = useState(null)
+  const [lafForm, setLafForm] = useState({
+
+    lostFoundId: lostFoundId,
+    hasApproved: false,
+    dateCreated: Timestamp.now().toDate(),
+    contactNo: "",
+    dateOfLastSeen: "",
+    email: "",
+    imageUrl: "",
+    lastSeen: "",
+    petDescription: "",
+    petGender: "",
+    petName: "",
+    petType: "",
+    reporterName: "",
+    whatReporting: "",
+  })
+
+  const lostFoundCollectionRef = collection(db, "LostAndFound")
+
+  useEffect(() => {
+    const q = query(lostFoundCollectionRef, orderBy("dateCreated", "desc"));
+    onSnapshot(q, lostFoundCollectionRef, snapshot => {
+      
+      setAnimal_Profile(snapshot.docs.map(doc => {
+        return{
+          id: doc.id,
+          ...doc.data()
+        }
+      }))
+    })
+  }, [])
+
+  // Handle Image
+
+  const handleImage = e => {
+    setImage(e.target.files[0])
+  }
+
+  // Handle Future Dates 
+
+  const currentDate = (current) => {
+    let customDate = moment();
+    return current && current > moment(customDate);
+    }
+
+  // Set Birthdate
+
+  function pickDate(date, dateString) {
+    setLafForm({...lafForm, dateOfLastSeen: dateString})
+  }
+
+
+  // Submitting to Firestore 
+
+  const handleSubmit = e => {
+    e.preventDefault()
+    setLoading(true)
+
+    setTimeout(() => {
+      if (
+        !lafForm.contactNo ||
+        !lafForm.dateOfLastSeen ||
+        !lafForm.email ||
+        !lafForm.lastSeen ||
+        !lafForm.petDescription ||
+        !lafForm.petGender ||
+        !lafForm.petName ||
+        !lafForm.petType ||
+        !lafForm.reporterName ||
+        !lafForm.whatReporting 
+      ){
+        notification.open({
+          icon: <> <FaSadTear className='mt-5 text-red-500'/>   </>,
+          message:  <> <p className='text-red-500'>  Invalid Form </p> </>,
+          description:
+          'Please make sure that you have completed the entire form before submitting',
+        });
+        
+        setLoading(false)
+        return 
+      }
+
+      const storageRef = ref(storage, `/LAFRequestImg/${lafForm.lostFoundId}${lafForm.reporterName}`);
+      const uploadTask = uploadBytesResumable(storageRef, image);
+  
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const prog = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setProgress(prog);
+        },
+        (error) => console.log(error),
+        () => {
+          {
+            setLafForm({
+              lostFoundId: "laf-"+ uuidv4().slice(0,8),
+              hasApproved: false,
+              dateCreated: Timestamp.now().toDate(),
+              contactNo: "",
+              dateOfLastSeen: "",
+              email: "",
+              imageUrl: "",
+              lastSeen: "",
+              petDescription: "",
+              petGender: "",
+              petName: "",
+              petType: "",
+              reporterName: "",
+              whatReporting: "",
+            })
+                
+            setLoading(false)
+            setIsModalVisible(false)
+            notification.success({
+              message: 
+                  <div className='flex flex-col justify-center items-center' style={{marginLeft: "-50px"}}>
+                    <RiStarSmileFill className='my-5 text-green-500' style={{fontSize: '30px'}}/> 
+                    <p className='px-3 pb-5 text-justify text-sm'>
+                      Form Submitted
+                    </p>
+                  </div>,
+              icon: <> </>,
+              duration: 3,
+          });
+          }
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+
+            const lostFoundCollectionRef = collection(db, "LostAndFound")
+            addDoc(lostFoundCollectionRef, {
+              dateCreated: Timestamp.now().toDate(),
+              lostFoundId:lafForm.lostFoundId,
+              hasApproved: lafForm.hasApproved,
+              contactNo: lafForm.contactNo,
+              dateOfLastSeen: lafForm.dateOfLastSeen,
+              email: lafForm.email,
+              imageUrl: downloadURL,
+              lastSeen: lafForm.lastSeen,
+              petDescription: lafForm.petDescription,
+              petGender: lafForm.petGender,
+              petName:  lafForm.petName,
+              petType:  lafForm.petType,
+              reporterName:  lafForm.reporterName,
+              whatReporting:  lafForm.whatReporting,
+            })
+          });
+        
+        }
+        
+      );
+
+   }, 2000)
+
+  }
 
   return (
     <>
@@ -298,8 +477,6 @@ export const Navbar = () => {
           </Drawer>
       </div>
   
-
-
   {/* Modal Login*/}
 
     <Modal 
@@ -387,107 +564,170 @@ export const Navbar = () => {
      <Modal 
         title={false} 
         footer={false}
-        visible={isModalVisible}
-        onClose={handleOk} 
-        onOk={handleOk} 
-        width='400px'
+        visible={isModalVisible} 
+        closeIcon={true}
         destroyOnClose={true}
-        onCancel={handleCancel}>
+        width='400px'>
 
         <div className='flex flex-col justify-center items-center text-center mt-10'>
             <p className='font-semibold text-3xl font-Poppins'>Lost and Found Form </p> 
             <img src={Logo} alt="logo-login" width='180px' className='' />
         </div>
-        <Form
-                name="basic"
-                labelCol={{ span: 0 }}
-                wrapperCol={{ span: 30 }}
-                initialValues={false}
+        <form 
+         onSubmit={handleSubmit}
+         autoComplete="off">
 
-                // onFinish={onFinish}
-                // onFinishFailed={onFinishFailed}
-                autoComplete="off"
-              >
+                <p className="leading-tight m-0 text-gray-500 font-normal text-justify pt-5" style={{ margin: "20px 0 20px 0" }}>
+                  <span className="font-medium text-[#155e59]">How it works?&nbsp;</span>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus aliquam nihil, a expedita culpa dicta qui tempora? Laboriosam doloribus dignissimos quod commodi eum error. Magni aliquam est rem tempora!
+                </p>          
+
                 <p className='text-[#2c2c2c] font-medium text-md pt-5'> Your Full Name </p> 
-                <Form.Item
-                  name="full name"
-                  rules={[{ required: true, message: 'Please input your Email!' }]}
-                >
-                  <Input placeholder='Full Name'/>
+                <Form.Item name="full name" >
+                  <Input placeholder='Full Name' 
+                  className='capitalize'
+                  value={lafForm.reporterName}
+                  disabled={loading}
+                  onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                  onChange={e => setLafForm({...lafForm, reporterName: e.target.value})}
+                  />
                 </Form.Item>
+
+              <Form>
                 <p className='text-[#2c2c2c] font-medium text-md pb-1'> What are you reporting? </p> 
                 <Form.Item
                   name="reporting"
                   rules={[{ required: true, message: 'Please select' }]}
                 >
-                  <Radio.Group name="radiogroup">
-                    <Radio value='lost'> Lost </Radio>
-                    <Radio value='found'> Found</Radio>
+                  <Radio.Group name="reporting"
+                   value={lafForm.whatReporting}
+                   disabled={loading}
+                   onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                   onChange={e => setLafForm({...lafForm, whatReporting: e.target.value})}>
+                    <Radio value='Lost'> Lost </Radio>
+                    <Radio value='Found'> Found</Radio>
                   </Radio.Group>
                 </Form.Item>
+              </Form>
+
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Last Seen </p> 
-                <Form.Item
-                  name="Last Seen"
-                >
-                  <TextArea placeholder="Where did you last see? " />
+                <Form.Item name="Last Seen">
+                  <TextArea placeholder="Where did you last see? Be specific on place" 
+                    className='capitalize'
+                    value={lafForm.lastSeen}
+                    disabled={loading}
+                    onChange={e => setLafForm({...lafForm, lastSeen: e.target.value})}
+                    onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                  />
+                </Form.Item>
+
+                <p className='text-[#2c2c2c] font-medium text-md pb-2 pt-2'> When was the last time you saw it</p> 
+                <Form.Item name="date">
+                    <DatePicker type='date'
+                        value={lafForm.dateOfLastSeen}
+                        onChange={ pickDate }
+                        disabled={loading}
+                        onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                        disabledDate={currentDate}
+                        />
                 </Form.Item>
 
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Email (for Updates) </p> 
-                <Form.Item
-                  name="email"
-                 
-                >
-                  <Input placeholder='Email'/>
+                <Form.Item name="email">
+                  <input type='email' placeholder='Email'
+                  required
+                  className='px-2 py-1 w-full border-2 border-gray-200 focus:outline-none focus:border-blue-300 focus:ring-blue-300'
+                  value={lafForm.email}
+                  disabled={loading}
+                  onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                  onChange={e => setLafForm({...lafForm, email: e.target.value})}
+                  
+                  />
                 </Form.Item>
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Contact Number (for Updates) </p> 
                 <Form.Item
                   name="contact"
                   rules={[{ required: true, message: 'Please input your contact for updates!' }]}
                 >
-                  <InputNumber type="numbers" 
-                    style={{ width: '100%' }} 
-                    minLength="11"
-                    placeholder='Contact No'
-                    controls={false}
-                    maxLength="11"/>
+                  <Input type='number' placeholder='Contact No'
+                      value={lafForm.contactNo}
+                      disabled={loading}
+                      minLength="11"
+                      controls={false}
+                      maxLength='11'
+                      onChange={e => setLafForm({...lafForm, contactNo: e.target.value})}
+                      onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                  />
                 </Form.Item>
+                
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Pet's Name </p> 
-                <Form.Item
-                  name="pet name"
-                  rules={[{ required: true, message: 'Please input the name of pet!' }]}
-                >
-                  <Input placeholder="Pet's Name" />
+                <Form.Item name="pet name">
+                  <Input placeholder="Pet's Name (Type N/A if Unsure)" 
+                  className='capitalize'
+                  value={lafForm.petName}
+                  disabled={loading}
+                  onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                  onChange={e => setLafForm({...lafForm, petName: e.target.value})}
+                  />
                 </Form.Item>
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Pet's Description </p> 
                 <Form.Item
-                  name="pet gender"
+                  name="pet description"
                 >
-                  <TextArea placeholder="Pet's Description (For Unique Identification)" />
+                  <TextArea placeholder="Pet's Description (For Unique Identification)" 
+                   value={lafForm.petDescription}
+                   disabled={loading}
+                   onChange={e => setLafForm({...lafForm, petDescription: e.target.value})}
+                   onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                 />
                 </Form.Item>
+
+              <Form>
                 <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Pet's Gender </p> 
                 <Form.Item
                   name="pet gender"
                   rules={[{ required: true, message: 'Please select' }]}
                 >
-                  <Radio.Group name="radiogroup">
-                    <Radio value='lost'> Male </Radio>
-                    <Radio value='found'> Female</Radio>
-                    <Radio value='found'> Unsure</Radio>
+                  <Radio.Group name="radiogroup" 
+                   value={lafForm.petGender}
+                   disabled={loading}
+                   onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                   onChange={e => setLafForm({...lafForm, petGender: e.target.value})}>
+                    <Radio value='Male'> Male </Radio>
+                    <Radio value='Female'> Female</Radio>
+                    <Radio value='Unsure'> Unsure</Radio>
                   </Radio.Group>
                 </Form.Item>
-                <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Pet's Picture for Report</p> 
+
+              </Form>
+              <Form>
+                <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Pet's Type </p> 
                 <Form.Item
-                  name="pet picture"
-                  rules={[{ required: true, message: 'Please upload picture' }]}>
-                  <input 
-                  type="file"  
-                  accept="image/png, image/svg, image/jpg, image/jpeg"
-                />
-              </Form.Item>
+                  name="pet gender"
+                  rules={[{ required: true, message: 'Please select' }]}
+                >
+                  <Radio.Group name="radiogroup" 
+                   value={lafForm.petType}
+                   disabled={loading}
+                   onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                   onChange={e => setLafForm({...lafForm, petType: e.target.value})}>
+                    <Radio value='Cat'> Cat </Radio>
+                    <Radio value='Dog'> Dog</Radio>
+                    <Radio value='Unsure'> Unsure</Radio>
+                  </Radio.Group>
+                </Form.Item>
+              </Form>
+
+              <div className='py-3 pb-6'>
+                <p className='text-[#2c2c2c] font-medium text-md pb-1'> Pet's Picture For Report </p> 
+                <input type='file' disabled={loading} name='image' accept="image/*" required onChange={ handleImage }/>
+              </div>
+
               <div className='flex justify-around pr-12 pt-2' >
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                   <button htmlType="submit" className='rounded-full text-[#155e59] text-md px-6 py-2'
                     onClick={handleOk} 
+                    disabled={loading}
                     style={{ 
                       borderWidth: '0.5px',
                       borderColor: '#155e59'
@@ -496,13 +736,23 @@ export const Navbar = () => {
                     Cancel
                   </button>
                 </Form.Item>
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <button htmlType="submit" className='rounded-full bg-[#155e59] text-md text-white px-5 py-2'>
-                    Submit
+                <Form.Item>
+                <button type="submit" 
+                  className={
+                    loading ? 
+                    'rounded-full bg-[#155e59] text-md text-white opacity-50 px-5 py-2 hover:bg-[#d95858]'
+                    :
+                    'rounded-full bg-[#155e59] text-md text-white px-5 py-2 hover:bg-[#d95858]'}>
+                    {
+                       loading ? 
+                       <p> Submitting </p> 
+                       :
+                       <p> Submit Form</p> 
+                    }
                   </button>
                 </Form.Item>
               </div>
-              </Form>
+        </form>
     </Modal>
     </>
   )

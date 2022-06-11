@@ -1,13 +1,32 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import {Link} from 'react-router-dom'
 import lostfoundbg from '../assets/lostfoundbg.png'
 import {FaFish} from 'react-icons/fa'
-import { lostfoundData } from './data'
+
+// Database
+import { db } from '../firebase-config'
+import {collection, onSnapshot, orderBy, query} from 'firebase/firestore'
+
 import LostFoundCards from './LostFoundCards'
 
-
-
 export const LostFound = () => {
+
+  const [LostAndFound, setLostAndFound] = useState([])
+  const lostAndFoundCollectionRef = collection(db, "LostAndFound")
+
+  useEffect(() => {
+    const q = query(lostAndFoundCollectionRef, orderBy("dateCreated", "desc"));
+    onSnapshot(q, lostAndFoundCollectionRef, snapshot => {
+      
+        setLostAndFound(snapshot.docs.map(doc => {
+        return{
+          id: doc.id,
+          ...doc.data()
+        }
+      }))
+    })
+  }, [])    
+
   return (
     <>
     <div className='pb-5' id='lostfound'>
@@ -30,12 +49,12 @@ export const LostFound = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 gap-10 w-full mx-auto px-4" style={{
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-10 w-full mx-auto px-4" style={{
             maxWidth: '1400px'
           }}>
-            {lostfoundData.slice(0,4).map((user) => (
+            {LostAndFound.slice(0,4).map((user) => (
                 <>
-              <LostFoundCards lost={user} key={user.id}/>
+              <LostFoundCards laf={user} key={user.id}/>
               </>
               ))}
             </div>

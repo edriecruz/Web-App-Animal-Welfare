@@ -23,11 +23,11 @@ import moment from 'moment';
 
 // Database
 import { db, storage } from '../firebase-config'
-import {collection, onSnapshot, doc, addDoc, serverTimestamp, orderBy, Firestore} from 'firebase/firestore'
+import {collection, onSnapshot, doc, addDoc, serverTimestamp, orderBy, query} from 'firebase/firestore'
 import {ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 const { TextArea } = Input;
-const petId =  "pet-"+ uuidv4().slice(0,6);
+const petId =  "pet-"+ uuidv4().slice(0,8);
 
 const AnimalList  = () => {
 
@@ -112,10 +112,11 @@ const AnimalList  = () => {
       })
 
       const animalProfileCollectionRef = collection(db, "Animal_Profile")
-      // const q = query(animalProfileCollectionRef, orderBy('dateCreated','asc'))
 
       useEffect(() => {
-        onSnapshot(animalProfileCollectionRef, snapshot => {
+        const q = query(animalProfileCollectionRef, orderBy("dateCreated", "desc"));
+        onSnapshot(q, animalProfileCollectionRef, snapshot => {
+          
           setAnimal_Profile(snapshot.docs.map(doc => {
             return{
               id: doc.id,
@@ -162,28 +163,6 @@ const AnimalList  = () => {
       
     const handleImage = e => {
       setImage(e.target.files[0])
-
-      const storageRef = ref(storage, `/AnimalProfileImg/${petId}${form.petName}`);
-      const uploadTask = uploadBytesResumable(storageRef, image);
-  
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const prog = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          setProgress(prog);
-        },
-        (error) => console.log(error),
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setForm({...form, imageUrl: downloadURL})
-          });
-        
-        }
-        
-      );
-
     }
 
     const handleSubmit = e => {
@@ -215,49 +194,82 @@ const AnimalList  = () => {
           return 
         }
 
-        addDoc(animalProfileCollectionRef, form).
-        
-        then(()=>{
-          setForm({
-            petId: "pet-"+ uuidv4().slice(0,6),
-            hasVaccinated: '',
-            petVaccine: [],
-            ownerAddress: "",
-            ownerContact: "",
-            ownerName: "",
-            petBirthdate: "",
-            petBreed: "",
-            petDetails: "",
-            petGender: "",
-            petName: "",
-            petType: "",
-            imageUrl: "",
-            dateCreated: serverTimestamp(),
-          })
-              
-          setLoading(false)
-          setIsModalVisible(false)
-          notification.success({
-            message: 
-                <div className='flex flex-col justify-center items-center' style={{marginLeft: "-50px"}}>
-                  <RiStarSmileFill className='my-5 text-green-500' style={{fontSize: '50px'}}/> 
-                  <p className='px-3 pb-5 text-justify text-sm'>
-                    Pet Added
-                  </p>
-                </div>,
-            icon: <> </>,
-            duration: 3,
-        });
-        })
+        const storageRef = ref(storage, `/AnimalProfileImg/${form.petId}${form.petName}`);
+        const uploadTask = uploadBytesResumable(storageRef, image);
+    
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const prog = Math.round(
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            );
+            setProgress(prog);
+          },
+          (error) => console.log(error),
+          () => {
+            {
+              setForm({
+                petId: "pet-"+ uuidv4().slice(0,6),
+                hasVaccinated: '',
+                petVaccine: [],
+                ownerAddress: "",
+                ownerContact: "",
+                ownerName: "",
+                petBirthdate: "",
+                petBreed: "",
+                petDetails: "",
+                petGender: "",
+                petName: "",
+                petType: "",
+                imageUrl: "",
+                dateCreated: serverTimestamp(),
+              })
+                  
+              setLoading(false)
+              setIsModalVisible(false)
+              notification.success({
+                message: 
+                    <div className='flex flex-col justify-center items-center' style={{marginLeft: "-50px"}}>
+                      <RiStarSmileFill className='my-5 text-green-500' style={{fontSize: '50px'}}/> 
+                      <p className='px-3 pb-5 text-justify text-sm'>
+                        Pet Added
+                      </p>
+                    </div>,
+                icon: <> </>,
+                duration: 3,
+            });
+            }
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+
+              const animalProfileCollectionRef = collection(db, "Animal_Profile")
+              addDoc(animalProfileCollectionRef, {
+                dateCreated: serverTimestamp(),
+                hasVaccinated: form.hasVaccinated,
+                imageUrl: downloadURL,
+                ownerAddress: form.ownerAddress,
+                ownerContact:form.ownerContact,
+                ownerName: form.ownerName,
+                petBirthdate: form.petBirthdate,
+                petBreed: form.petBreed,
+                petDetails: form.petDetails,
+                petGender: form.petGender,
+                petId: form.petId,
+                petName: form.petName,
+                petType: form.petType,
+                petVaccine: form.petVaccine
+              })
+            });
+          
+          }
+          
+        );
+
      }, 2000)
 
     }
 
-    console.log(form)
-
   return (
      <>
-     {}
        < div className='min-w-screen'>
             <div className="bg-[#155e59] h-64 shadow-lg"  
                 style={{
@@ -298,7 +310,7 @@ const AnimalList  = () => {
                     </Dropdown>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mx-auto px-10 lg:ml-5 md:ml-2 py-6 mt-10">
-                    {Animal_Profile.map((user, i) => (
+                    {Animal_Profile.map((user) => (
                     <>
                         <AnimalListCards details={user} key={user.id}/>
                     </>
@@ -521,7 +533,7 @@ const AnimalList  = () => {
 
                 <div className='py-3 pb-3'>
                   <p className='text-[#2c2c2c] font-medium text-md pb-1'> Pet's Picture </p> 
-                  <input type='file' name='image' accept="image/*" required onChange={ handleImage }/>
+                  <input type='file' disabled={loading} name='image' accept="image/*" required onChange={ handleImage }/>
                 </div>
 
                 <div className='flex justify-around pr-12 pt-2' >
@@ -544,7 +556,12 @@ const AnimalList  = () => {
                     'rounded-full bg-[#155e59] text-md text-white opacity-50 px-5 py-2 hover:bg-[#d95858]'
                     :
                     'rounded-full bg-[#155e59] text-md text-white px-5 py-2 hover:bg-[#d95858]'}>
-                    Add Pet
+                    {
+                       loading ? 
+                       <p> Adding Pet </p> 
+                       :
+                       <p> Add Pet </p> 
+                    }
                   </button>
                 </Form.Item>
               </div>

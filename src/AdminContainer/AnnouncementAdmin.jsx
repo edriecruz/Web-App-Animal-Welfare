@@ -12,18 +12,18 @@ import {RiStarSmileFill} from 'react-icons/ri'
 
 import { Menu, Dropdown, notification, Modal, Form, Input } from 'antd';
 
-import AnnouncementCards from '../LandingContainer/AnnouncementCards'
+import AnnouncementCards from './AnnouncementCards'
 
 import {v4 as uuidv4} from 'uuid'
 
 // Database
 import { db, storage } from '../firebase-config'
-import {collection, onSnapshot, doc, addDoc, serverTimestamp, orderBy} from 'firebase/firestore'
+import {collection, onSnapshot, doc, addDoc, serverTimestamp, Timestamp,  orderBy, query} from 'firebase/firestore'
 import {ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 const { TextArea } = Input;
 
-const announcementId = uuidv4().slice(0,5)
+const announcementId = "announcement-" + uuidv4().slice(0,8);
 
 const AnnouncementAdmin  = () => {
 
@@ -77,18 +77,6 @@ const AnnouncementAdmin  = () => {
       );
 
       const [isModalVisible, setIsModalVisible] = useState(false);
-      const [loading, setLoading] = useState(false);
-      const [Announcement, setAnnouncement] = useState([])
-      const [image, setImage] = useState(null)
-      const [form, setForm] = useState({
-
-          announcementId: "ann" + announcementId,
-          author: '',
-          details: '',
-          title: '',
-          imageUrl: '',
-          timestamp: serverTimestamp()
-      })
 
       const showModal = () => {
           setIsModalVisible(true);
@@ -97,12 +85,26 @@ const AnnouncementAdmin  = () => {
       const handleOk = () => {
           setIsModalVisible(false);
       };
+
+      const [loading, setLoading] = useState(false);
+      const [Announcement, setAnnouncement] = useState([])
+      const [image, setImage] = useState(null)
+      const [form, setForm] = useState({
+
+          announcementId: announcementId,
+          author: '',
+          details: '',
+          title: '',
+          imageUrl: '',
+          dateCreated: Timestamp.now().toDate()
+      })
     
 
       const announcementCollectionRef = collection(db, "Announcement")
 
       useEffect(() => {
-        onSnapshot(announcementCollectionRef, snapshot => {
+        const q = query(announcementCollectionRef, orderBy("dateCreated", "desc"));
+        onSnapshot(q, announcementCollectionRef, snapshot => {
           setAnnouncement(snapshot.docs.map(doc => {
             return{
               id: doc.id,
@@ -112,10 +114,14 @@ const AnnouncementAdmin  = () => {
         })
       }, [])
 
+
+      // Handle Image
+
       const handleImage = e => {
         setImage(e.target.files[0])
-      
       }
+
+      // Handle Submit 
 
       const handleSubmit = e => {
         e.preventDefault()
@@ -125,7 +131,9 @@ const AnnouncementAdmin  = () => {
           if (
             !form.author ||
             !form.details||
-            !form.title
+            !form.title || 
+            !image
+            
           ){
             notification.open({
               icon: <> <FaSadTear className='mt-5 text-red-500'/>   </>,
@@ -138,55 +146,63 @@ const AnnouncementAdmin  = () => {
             return 
           }
   
-          addDoc(announcementCollectionRef, form)
-  
-          const storageRef = ref(storage, `/NewsImg/${form.announcementId}`)
-          const imageUpload = uploadBytesResumable(storageRef, image)
-    
-          imageUpload.on('state_changed', 
-          (snapshot) => {
-            const progressPercent = Math.round(snapshot.bytesTransferred / snapshot.totalBytes * 100)
-          }, (err) => {
-              console.log(err)
-              setLoading(false)
-          },
+          const storageRef = ref(storage, `/NewsImg/${form.announcementId}${form.title}`);
+          const uploadTask = uploadBytesResumable(storageRef, image);
+      
+          uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              const prog = Math.round(
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+              );
+            },
+            (error) => console.log(error),
             () => {
-              getDownloadURL(imageUpload.snapshot.ref)
-                .then((url) => {
-                  console.log(url)
-                  setForm({...form, imageUrl: url})
-                  setLoading(false)
+              {
+                setForm({
+                  announcementId: "announcement-" + uuidv4().slice(0,8),
+                  author: "",
+                  details: "",
+                  title:  "",
+                  imageUrl: "",
+                  dateCreated: serverTimestamp(),
                 })
+                    
+                setLoading(false)
+                setIsModalVisible(false)
+                notification.success({
+                  message: 
+                      <div className='flex flex-col justify-center items-center' style={{marginLeft: "-50px"}}>
+                        <RiStarSmileFill className='my-5 text-green-500' style={{fontSize: '50px'}}/> 
+                        <p className='px-3 pb-5 text-justify text-sm'>
+                          Announcement Added
+                        </p>
+                      </div>,
+                  icon: <> </>,
+                  duration: 3,
+              });
+              }
+              getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                const announcementCollectionRef = collection(db, "Announcement")
+                addDoc(announcementCollectionRef, {
+                  dateCreated: Timestamp.now().toDate(),
+                  announcementId: form.announcementId,
+                  author: form.author,
+                  details: form.details,
+                  title:  form.title,
+                  imageUrl: downloadURL,
+                })
+              });
+            
             }
-          )
+            
+          );
   
-          setForm({
-            announcementId: "ann" + announcementId,
-            title: '',
-            author: '',
-            details: '',
-            timestamp: serverTimestamp()
-          })
+       }, 2000)
   
-          setLoading(false)
-          setIsModalVisible(false)
-          notification.success({
-            message: 
-                <div className='flex flex-col justify-center items-center' style={{marginLeft: "-50px"}}>
-                  <RiStarSmileFill className='my-5 text-green-500' style={{fontSize: '50px'}}/> 
-                  <p className='px-3 pb-5 text-justify text-sm'>
-                    Annoucement
-                  </p>
-                </div>,
-            icon: <> </>,
-            duration: 3,
-        });
-        }, 2000)
       }
 
       console.log(form)
-
-
   return (
      
      <>
@@ -232,11 +248,11 @@ const AnnouncementAdmin  = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mx-auto px-10 lg:ml-5 md:ml-2 py-6 mt-10" style={{
                     maxWidth: '1400px'
                 }}>
-                     {/* { Announcement.map((user, i) => (
+                     { Announcement.map((user) => (
                         <>
                         <AnnouncementCards ann={user} key={user.id}/>
                         </>
-                        ))} */}
+                        ))}
                    
                     </div>
                 </div>
@@ -288,7 +304,7 @@ const AnnouncementAdmin  = () => {
                 </Form.Item>
               
                 {/* Details */}
-                <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'>Details</p> 
+                <p className='text-[#2c2c2c] font-medium text-md pt-3 pb-2'>Details</p> 
                 <Form.Item
                   name="details"
                   rules={[{ required: true, message: 'Please input the details' }]}
@@ -303,10 +319,10 @@ const AnnouncementAdmin  = () => {
 
                 <div className='py-3 pb-3'>
                   <p className='text-[#2c2c2c] font-medium text-md pb-1'> Announcement </p> 
-                  <input type='file' name='image' accept="image/*" required onChange={ handleImage }/>
+                  <input type='file' name='image' disabled={loading} accept="image/*" required onChange={ handleImage }/>
                 </div>
 
-                <div className='flex justify-around pr-12 pt-2' >
+                <div className='flex justify-around pr-12 pt-6' >
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                   <button type="button" className='rounded-full text-[#155e59] hover:text-white hover:bg-[#155e59] text-md px-6 py-2'
                     onClick={handleOk} 
@@ -326,7 +342,12 @@ const AnnouncementAdmin  = () => {
                     'rounded-full bg-[#155e59] text-md text-white opacity-50 px-5 py-2 hover:bg-[#d95858]'
                     :
                     'rounded-full bg-[#155e59] text-md text-white px-5 py-2 hover:bg-[#d95858]'}>
-                    Add Announcement
+                    {
+                       loading ? 
+                       <p> Adding Announcement </p> 
+                       :
+                       <p> Add Announcement </p> 
+                    }
                   </button>
                 </Form.Item>
               </div>

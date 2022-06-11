@@ -1,12 +1,18 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
+import { Link } from 'react-router-dom';
+
+
 import {FcSearch} from 'react-icons/fc'
 import infobg from '../assets/infobg.png'
 import {IoIosPaw} from 'react-icons/io'
 import {AiFillCaretDown} from 'react-icons/ai'
-import { Link } from 'react-router-dom';
 import { Menu, Dropdown } from 'antd';
-import { lostfoundData } from '../LandingContainer/data'
 import { LostAndFoundCardsRequest } from './LostAndFoundCardsRequest'
+
+// Database
+import { db, storage } from '../firebase-config'
+import {collection, onSnapshot, doc, addDoc, serverTimestamp, orderBy, query} from 'firebase/firestore'
+import {ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 const LostAndFoundRequest  = () => {
 
@@ -58,7 +64,24 @@ const LostAndFoundRequest  = () => {
           
         </Menu>
       );
-    
+
+      const [LostAndFound, setLostAndFound] = useState([])
+
+      const lostAndFoundCollectionRef = collection(db, "LostAndFound")
+
+      useEffect(() => {
+        const q = query(lostAndFoundCollectionRef, orderBy("dateCreated", "desc"));
+        onSnapshot(q, lostAndFoundCollectionRef, snapshot => {
+          
+            setLostAndFound(snapshot.docs.map(doc => {
+            return{
+              id: doc.id,
+              ...doc.data()
+            }
+          }))
+        })
+      }, [])
+
 
   return (
      
@@ -105,7 +128,7 @@ const LostAndFoundRequest  = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mx-auto px-10 lg:ml-5 md:ml-2 py-6 mt-10" style={{
                     maxWidth: '1400px'
                 }}>
-                    {lostfoundData.map((user) => (
+                    {LostAndFound.map((user) => (
                         <>
                         <LostAndFoundCardsRequest laf={user} key={user.id}/>
                     </>
