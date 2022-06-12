@@ -8,7 +8,7 @@ import {RiStarSmileFill} from 'react-icons/ri'
 
 // Database
 import { db, storage } from '../firebase-config'
-import {doc, deleteDoc} from 'firebase/firestore'
+import {doc, deleteDoc, updateDoc} from 'firebase/firestore'
 import { deleteObject, ref } from 'firebase/storage';
 
 const { confirm } = Modal;
@@ -59,6 +59,42 @@ export const LostAndFoundCardsRequest = ({laf}) => {
     }, 2000)
   }
 
+
+  // Accept Request
+
+  const [form, ] = useState({
+    hasApproved: false
+  })
+
+  const acceptRequest = (id) => {
+      setLoading(true)
+      setTimeout(() => {
+
+        try {
+          updateDoc(doc(db, "LostAndFound", id), {
+            ...form,
+            hasApproved: true
+          });
+          setIsModalVisible(false)
+          notification.open({
+            icon: <> <RiStarSmileFill className='mt-5 text-green-500'/>   </>,
+            message:  <> <p className='text-green-500'> Request Accepted </p> </>,
+            description:
+            'Request has been published publicly',
+          });
+        } catch (error) {
+          notification.open({
+            icon: <> <FaSadTear className='mt-5 text-red-500'/>   </>,
+            message:  <> <p className='text-red-500'> Error accepting the request </p> </>,
+            description:
+            'Please try again! ',
+          });
+      }
+        setLoading(false)
+      }, 1000)
+  }
+
+
 function showPromiseConfirm() {
     confirm({
       title: <> <div className='flex'> <IoIosPaw size={25} color="#155e59" /><p className='pl-2'> Do you really want to approve it? </p> </div> </> ,
@@ -67,6 +103,7 @@ function showPromiseConfirm() {
         return new Promise((resolve, reject) => {
           setIsModalVisible(false)
           setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+          acceptRequest(laf.id)
         }).catch(() => console.log('Oops errors!'));
           
       },
@@ -95,22 +132,22 @@ function showPromiseConfirm() {
 {laf.hasApproved === false ?
   <>
     
-    <div className='basis-1/3 border bg-white shadow-2xl' key={laf.id}>
-    <img src={laf.imageUrl} alt='lost' className='rounded-md' width='400px' />
+    <div className='h-full border bg-white shadow-2xl' key={laf.id}>
+    <img src={laf.imageUrl} alt='lost' className='rounded-md w-full h-3/6' />
       <div className='flex pr-5 py-3 text-[#155e59] hover:text-[#d95858] pl-5'>
         <AiFillCalendar size='30px'/>
         <h1 className='pt-1 pl-2 text-[#155e59]'>{laf.dateOfLastSeen}</h1>
       </div>
     <div className='w-3/4 py-3 flex flex-col pl-5'>
-      <h1 className='text-[#d95858] lg:text-2xl md:text-base font-bold'>
+      <h1 className='text-[#d95858] lg:text-2xl md:text-base font-bold truncate'>
       {laf.contactNo}</h1>
-      <p className='text-base text-[#155e59] capitalize'>
+      <p className='text-base text-[#155e59] capitalize truncate'>
       {laf.reporterName}
       </p>
         <button 
         onClick={showModal}
         className="flex text-[#d95858] font-bold hover:text-[#155e59] pt-8 pb-6 lg:text-base md:text-xs md:font-medium">
-        <p className='pt-1'> Read Info </p> 
+        <p className='pt-1'> View Action </p> 
         <IoIosPaw size='30px' className="pb-2 lg:mt-1.5 md:hidden xsm:mt-1 hover:text-[#155e59]"/>
         </button>
     </div>
@@ -144,18 +181,16 @@ function showPromiseConfirm() {
                             <p className='box row-start-1 row-end-1 col-start-2 col-end-4 text-[#2c2c2c]'>{laf.contactNo} </p> 
                             <p className="box row-start-2 row-end-2 col-start-1 col-end-1 text-[#155e59] font-medium">Email: </p>
                             <p className="box row-start-2 row-end-2 col-start-2 col-end-4 text-[#2c2c2c]">{laf.email}</p>
-                            <p className="box row-start-3 row-end-3 col-start-1 col-end-1 text-[#155e59] font-medium">Owner (if Lost): </p>
-                            <p className="box row-start-3 row-end-3 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.owner}</p>
-                            <p className="box row-start-4 row-end-4 col-start-1 col-end-1 text-[#155e59] font-medium">Last Seen (Place): </p>
-                            <p className="box row-start-4 row-end-4 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.lastSeen}</p>
-                            <p className="box row-start-5 row-end-5 col-start-1 col-end-1 text-[#155e59] font-medium">Last Seen (Date) </p>
-                            <p className="box row-start-5 row-end-5 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.dateOfLastSeen}</p>
-                            <p className="box row-start-6 row-end-6 col-start-1 col-end-1 text-[#155e59] font-medium">Gender: </p>
-                            <p className="box row-start-6 row-end-6 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.petGender}</p>
-                            <p className="box row-start-7 row-end-7 col-start-1 col-end-1 text-[#155e59] font-medium">Pet Type:</p>
-                            <p className="box row-start-7 row-end-7 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{laf.petType}</p>
-                            <p className="box row-start-8 row-end-8 col-start-1 col-end-1 text-[#155e59] font-medium"> Description </p>
-                            <p className="box row-start-8 row-end-8 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{laf.petDescription}</p>
+                            <p className="box row-start-3 row-end-3 col-start-1 col-end-1 text-[#155e59] font-medium">Last Seen (Place): </p>
+                            <p className="box row-start-3 row-end-3 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.lastSeen}</p>
+                            <p className="box row-start-4 row-end-4 col-start-1 col-end-1 text-[#155e59] font-medium">Last Seen (Date) </p>
+                            <p className="box row-start-4 row-end-4 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.dateOfLastSeen}</p>
+                            <p className="box row-start-5 row-end-5 col-start-1 col-end-1 text-[#155e59] font-medium">Gender: </p>
+                            <p className="box row-start-5 row-end-5 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.petGender}</p>
+                            <p className="box row-start-6 row-end-6 col-start-1 col-end-1 text-[#155e59] font-medium">Pet Type:</p>
+                            <p className="box row-start-6 row-end-6 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{laf.petType}</p>
+                            <p className="box row-start-7 row-end-7 col-start-1 col-end-1 text-[#155e59] font-medium"> Description </p>
+                            <p className="box row-start-7 row-end-7 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{laf.petDescription}</p>
                           </div>
                             <img src={laf.imageUrl} alt='lostfound-profile' className='py-2'></img>
                             <div className='flex justify-around pt-10' >
@@ -164,10 +199,19 @@ function showPromiseConfirm() {
                             >
                             Decline & Delete
                           </button>
-                          <button htmlType="submit" className='rounded-full bg-green-700 text-md text-white px-5 py-2 hover:bg-[#155e59]'
+                          <button htmlType="submit" 
                             onClick={showPromiseConfirm}
-                          >
-                            Accept
+                            className={
+                              loading ? 
+                              'rounded-full bg-green-700 text-md text-white opacity-50 px-5 py-2 hover:bg-[#d95858]'
+                              :
+                              'rounded-full bg-green-700 text-md text-white px-5 py-2 hover:bg-[#d95858]'}>
+                              {
+                                 loading ? 
+                                 <p> Accepting ...  </p> 
+                                 :
+                                 <p> Accept Request </p> 
+                              }
                           </button>
                       </div>
                       </div>

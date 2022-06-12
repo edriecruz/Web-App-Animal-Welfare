@@ -23,7 +23,7 @@ import moment from 'moment';
 
 // Database
 import { db, storage } from '../firebase-config'
-import {collection, onSnapshot, doc, addDoc, serverTimestamp, orderBy, query} from 'firebase/firestore'
+import {collection, onSnapshot, addDoc, serverTimestamp, orderBy, query} from 'firebase/firestore'
 import {ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 const { TextArea } = Input;
@@ -92,7 +92,7 @@ const AnimalList  = () => {
     
       const [loading, setLoading] = useState(false)
       const [Animal_Profile, setAnimal_Profile] = useState([])
-      const [progress, setProgress] = useState(0)
+      const [, setProgress] = useState(0)
       const [image, setImage] = useState(null)
       const [form, setForm] = useState({
         petId: petId,
@@ -143,7 +143,6 @@ const AnimalList  = () => {
         petVaccine: vaccineClone
       })
     }
-
 
     const handleVaccinecount = () => {
       setForm({
@@ -477,7 +476,7 @@ const AnimalList  = () => {
                         : 
                         'bg-[#155e59] text-[white] rounded-lg px-2 py-1'
                       } onClick={deleteVaccine}
-                      disabled={form.petVaccine <= 1 && loading}
+                      disabled={form.petVaccine < 1 || loading}
                       > Delete Vaccine </button>
                       <button type='button'  disabled={loading} className='bg-[#155e59] text-white rounded-lg px-2 py-1' onClick={handleVaccinecount}> Add Vaccine </button>
                     </div>
@@ -514,7 +513,7 @@ const AnimalList  = () => {
 
                 { /* Owner Contact */}
 
-                <p className='text-[#2c2c2c] font-medium text-md pb-1'> Contact Number (for Updates) </p> 
+                <p className='text-[#2c2c2c] font-medium text-md pb-1'> Contact Number (For Updates) </p> 
                 <Form.Item
                   name="contact"
                   className='pb-2'
@@ -532,7 +531,7 @@ const AnimalList  = () => {
                 </Form.Item>
 
                 <div className='py-3 pb-3'>
-                  <p className='text-[#2c2c2c] font-medium text-md pb-1'> Pet's Picture </p> 
+                  <p className='text-[#2c2c2c] font-medium text-md pb-1'> Pet's Picture (Landscape for Best Preview) </p> 
                   <input type='file' disabled={loading} name='image' accept="image/*" required onChange={ handleImage }/>
                 </div>
 

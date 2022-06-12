@@ -10,9 +10,8 @@ import { Menu, Dropdown } from 'antd';
 import { LostAndFoundCardsRequest } from './LostAndFoundCardsRequest'
 
 // Database
-import { db, storage } from '../firebase-config'
-import {collection, onSnapshot, doc, addDoc, serverTimestamp, orderBy, query} from 'firebase/firestore'
-import {ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { db } from '../firebase-config'
+import {collection, onSnapshot,  orderBy, query} from 'firebase/firestore'
 
 const LostAndFoundRequest  = () => {
 
@@ -95,7 +94,7 @@ const LostAndFoundRequest  = () => {
                     height: '250px'
                 }} >    
                 <div className='flex justify-between'>
-                    <h1 className='pt-7 text-xl font-semibold text-white md:text-base md:mt-1 lg:text-xl lg:ml-16 md:ml-10'> Lost and Found Request </h1> 
+                    <h1 className='pt-7 text-xl font-semibold text-white md:text-base md:mt-1 lg:text-xl lg:ml-16 md:ml-10'> Lost & Found Request </h1> 
                     <div className="pt-6 relative text-gray-600 lg:mr-16 md:mr-3">
                         <input className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
                             type="search" name="search" placeholder="Search" />

@@ -17,7 +17,7 @@ const { confirm } = Modal;
 export const LostAndFoundCards = ({laf}) => {
     
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [loading, setLoading] = useState(false)
+  const [, setLoading] = useState(false)
 
   const showModal = () => {
       setIsModalVisible(true);
@@ -80,16 +80,16 @@ export const LostAndFoundCards = ({laf}) => {
 {laf.hasApproved === true ?
   <>
 
-    <div className='basis-1/3 border bg-white shadow-2xl' key={laf.id}>
-    <img src={laf.imageUrl} alt='lost' className='rounded-md' width='400px' />
+    <div className='h-full border bg-white shadow-2xl' key={laf.id}>
+    <img src={laf.imageUrl} alt='lost' className='rounded-md w-full h-3/6' />
       <div className='flex pr-5 py-3 text-[#155e59] hover:text-[#d95858] pl-5'>
         <AiFillCalendar size='30px'/>
         <h1 className='pt-1 pl-2 text-[#155e59]'>{laf.dateOfLastSeen}</h1>
       </div>
     <div className='w-3/4 py-3 flex flex-col pl-5'>
-      <h1 className='text-[#d95858] lg:text-2xl md:text-base font-bold'>
+      <h1 className='text-[#d95858] lg:text-2xl md:text-base font-bold truncate'>
       {laf.contactNo}</h1>
-      <p className='text-base text-[#155e59] capitalize'>
+      <p className='text-base text-[#155e59] capitalize truncate'>
       {laf.reporterName}
       </p>
         <button 
@@ -128,18 +128,16 @@ export const LostAndFoundCards = ({laf}) => {
                             <p className='box row-start-1 row-end-1 col-start-2 col-end-4 text-[#2c2c2c]'>{laf.contactNo} </p> 
                             <p className="box row-start-2 row-end-2 col-start-1 col-end-1 text-[#155e59] font-medium">Email: </p>
                             <p className="box row-start-2 row-end-2 col-start-2 col-end-4 text-[#2c2c2c]">{laf.email}</p>
-                            <p className="box row-start-3 row-end-3 col-start-1 col-end-1 text-[#155e59] font-medium">Owner (if Lost): </p>
-                            <p className="box row-start-3 row-end-3 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.owner}</p>
-                            <p className="box row-start-4 row-end-4 col-start-1 col-end-1 text-[#155e59] font-medium">Last Seen (Place): </p>
-                            <p className="box row-start-4 row-end-4 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.lastSeen}</p>
-                            <p className="box row-start-5 row-end-5 col-start-1 col-end-1 text-[#155e59] font-medium">Last Seen (Date) </p>
-                            <p className="box row-start-5 row-end-5 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.dateOfLastSeen}</p>
-                            <p className="box row-start-6 row-end-6 col-start-1 col-end-1 text-[#155e59] font-medium">Gender: </p>
-                            <p className="box row-start-6 row-end-6 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.petGender}</p>
-                            <p className="box row-start-7 row-end-7 col-start-1 col-end-1 text-[#155e59] font-medium">Pet Type:</p>
-                            <p className="box row-start-7 row-end-7 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{laf.petType}</p>
-                            <p className="box row-start-8 row-end-8 col-start-1 col-end-1 text-[#155e59] font-medium"> Description </p>
-                            <p className="box row-start-8 row-end-8 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{laf.petDescription}</p>
+                            <p className="box row-start-3 row-end-3 col-start-1 col-end-1 text-[#155e59] font-medium">Last Seen (Place): </p>
+                            <p className="box row-start-3 row-end-3 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.lastSeen}</p>
+                            <p className="box row-start-4 row-end-4 col-start-1 col-end-1 text-[#155e59] font-medium">Last Seen (Date) </p>
+                            <p className="box row-start-4 row-end-4 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.dateOfLastSeen}</p>
+                            <p className="box row-start-5 row-end-5 col-start-1 col-end-1 text-[#155e59] font-medium">Gender: </p>
+                            <p className="box row-start-5 row-end-5 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.petGender}</p>
+                            <p className="box row-start-6 row-end-6 col-start-1 col-end-1 text-[#155e59] font-medium">Pet Type:</p>
+                            <p className="box row-start-6 row-end-6 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{laf.petType}</p>
+                            <p className="box row-start-7 row-end-7 col-start-1 col-end-1 text-[#155e59] font-medium"> Description </p>
+                            <p className="box row-start-7 row-end-7 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{laf.petDescription}</p>
                           </div>
                             <img src={laf.imageUrl} alt='lostfound-profile' className='py-2'></img>
                             <div className='flex justify-center'>

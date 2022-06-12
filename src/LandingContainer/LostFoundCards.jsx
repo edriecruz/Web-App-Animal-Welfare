@@ -73,18 +73,16 @@ const LostFoundCards = ({laf}) => {
                             <p className='box row-start-1 row-end-1 col-start-2 col-end-4 text-[#2c2c2c]'>{laf.contactNo} </p> 
                             <p className="box row-start-2 row-end-2 col-start-1 col-end-1 text-[#155e59] font-medium">Email: </p>
                             <p className="box row-start-2 row-end-2 col-start-2 col-end-4 text-[#2c2c2c]">{laf.email}</p>
-                            <p className="box row-start-3 row-end-3 col-start-1 col-end-1 text-[#155e59] font-medium">Owner (if Lost): </p>
-                            <p className="box row-start-3 row-end-3 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.owner}</p>
-                            <p className="box row-start-4 row-end-4 col-start-1 col-end-1 text-[#155e59] font-medium">Last Seen (Place): </p>
-                            <p className="box row-start-4 row-end-4 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.lastSeen}</p>
-                            <p className="box row-start-5 row-end-5 col-start-1 col-end-1 text-[#155e59] font-medium">Last Seen (Date) </p>
-                            <p className="box row-start-5 row-end-5 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.dateOfLastSeen}</p>
-                            <p className="box row-start-6 row-end-6 col-start-1 col-end-1 text-[#155e59] font-medium">Gender: </p>
-                            <p className="box row-start-6 row-end-6 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.petGender}</p>
-                            <p className="box row-start-7 row-end-7 col-start-1 col-end-1 text-[#155e59] font-medium">Pet Type:</p>
-                            <p className="box row-start-7 row-end-7 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{laf.petType}</p>
-                            <p className="box row-start-8 row-end-8 col-start-1 col-end-1 text-[#155e59] font-medium"> Description </p>
-                            <p className="box row-start-8 row-end-8 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{laf.petDescription}</p>
+                            <p className="box row-start-3 row-end-3 col-start-1 col-end-1 text-[#155e59] font-medium">Last Seen (Place): </p>
+                            <p className="box row-start-3 row-end-3 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.lastSeen}</p>
+                            <p className="box row-start-4 row-end-4 col-start-1 col-end-1 text-[#155e59] font-medium">Last Seen (Date) </p>
+                            <p className="box row-start-4 row-end-4 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.dateOfLastSeen}</p>
+                            <p className="box row-start-5 row-end-5 col-start-1 col-end-1 text-[#155e59] font-medium">Gender: </p>
+                            <p className="box row-start-5 row-end-5 col-start-2 col-end-4 text-[#2c2c2c] capitalize">{laf.petGender}</p>
+                            <p className="box row-start-6 row-end-6 col-start-1 col-end-1 text-[#155e59] font-medium">Pet Type:</p>
+                            <p className="box row-start-6 row-end-6 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{laf.petType}</p>
+                            <p className="box row-start-7 row-end-7 col-start-1 col-end-1 text-[#155e59] font-medium"> Description </p>
+                            <p className="box row-start-7 row-end-7 col-start-2 col-end-4 text-[#2c2c2c] text-justify">{laf.petDescription}</p>
                           </div>
                             <img src={laf.imageUrl} alt='lostfound-profile' className='py-2'></img>
                       </div>

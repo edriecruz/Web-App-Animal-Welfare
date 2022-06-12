@@ -1,13 +1,14 @@
 import React, {useState} from 'react'
-import {IoIosPaw} from 'react-icons/io'
-import { Modal, Radio, Form, Input, InputNumber, DatePicker, notification  } from 'antd';
+import { Modal, Radio, Form, Input, DatePicker, notification  } from 'antd';
 import {FaSadTear} from 'react-icons/fa'
 import {RiStarSmileFill} from 'react-icons/ri'
 import Logo from '../assets/logo.png'
 import moment from 'moment';
+
 import { db, storage } from '../firebase-config'
-import {doc, deleteDoc} from 'firebase/firestore'
-import { deleteObject, ref } from 'firebase/storage';
+import {doc, deleteDoc, Timestamp, updateDoc,} from 'firebase/firestore'
+import { deleteObject, ref, uploadBytesResumable, getDownloadURL} from 'firebase/storage';
+
 
 const { confirm } = Modal;
 
@@ -43,6 +44,8 @@ export const AnimalListCards = ({details}) => {
       setUpdateModal(false);
   };
 
+
+  // Delete Document 
   const desertRef = ref(storage, `/AnimalProfileImg/${details.petId}${details.petName}`);
 
   const removePet = id => {
@@ -70,21 +73,6 @@ export const AnimalListCards = ({details}) => {
     }, 2000)
   }
 
-  function showPromiseConfirm() {
-    confirm({
-      title: <> <div className='flex'> <IoIosPaw size={25} color="#155e59" /><p className='pl-2'> Do you really want to update these items? </p> </div> </> ,
-      icon: false,
-      onOk() {
-        return new Promise((resolve, reject) => {
-          setUpdateModal(false)
-          setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-        }).catch(() => console.log('Oops errors!'));
-          
-      },
-      onCancel() {},
-    });
-  }
-
   function showDeleteConfirm() {
     confirm({
       title: 'Are you sure to delete this profile?',
@@ -101,19 +89,139 @@ export const AnimalListCards = ({details}) => {
     });
   }
 
+
+ // Update Document
+
+ const [image, setImage] = useState(null)
+ const [form, setForm] = useState({
+   petId: details.petId,
+   hasVaccinated: details.hasVaccinated,
+   petVaccine: details.petVaccine,
+   ownerAddress: details.ownerAddress,
+   ownerContact: details.ownerContact,
+   ownerName: details.ownerName,
+   petBirthdate: details.petBirthdate,
+   petBreed: details.petBreed,
+   petDetails: details.petDetails,
+   petGender: details.petGender,
+   petName: details.petName,
+   petType: details.petType,
+   dateCreated: Timestamp.now().toDate(),
+   imageUrl: details.imageUrl,
+ })
+
+ function pickDate(date, dateString) {
+  setForm({...form, petBirthdate: dateString})
+}
+
+const currentDate = (current) => {
+  let customDate = moment();
+  return current && current > moment(customDate);
+  }
+
+const handleVaccine = (e, i) => {
+  const vaccineClone = [...form.petVaccine]
+  vaccineClone[i] = e.target.value
+  setForm({
+    ...form,
+    petVaccine: vaccineClone
+  })
+}
+
+const handleVaccinecount = () => {
+  setForm({
+    ...form,
+    petVaccine: [...form.petVaccine, ""]
+  })
+}
+
+const deleteVaccine = i => {
+  const deleteList = [...form.petVaccine]
+  deleteList.pop(i, 1)
+  setForm({
+    ...form,
+    petVaccine: deleteList
+  })
+}
+  
+const handleImage = e => {
+  setImage(e.target.files[0])
+}
+
+
+  const updatePet = (id) => {
+    setLoading(true)
+    setTimeout(() => {
+
+      try {
+        const storageRef = ref(storage, `/AnimalProfileImg/${form.petId}${form.petName}`);
+        const uploadTask = uploadBytesResumable(storageRef, image);
+
+        uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              const prog = Math.round(
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+              );
+              console.log(prog)
+            },
+            (error) => console.log(error),
+            () => {
+              getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                updateDoc(doc(db, "Animal_Profile", id), {
+                  ...form,
+                  petId: form.petId,
+                  hasVaccinated: form.hasVaccinated,
+                  petVaccine: form.petVaccine,
+                  ownerAddress: form.ownerAddress,
+                  ownerContact: form.ownerContact,
+                  ownerName: form.ownerName,
+                  petBirthdate: form.petBirthdate,
+                  petBreed: form.petBreed,
+                  petDetails: form.petDetails,
+                  petGender: form.petGender,
+                  petName: form.petName,
+                  petType: form.petType,
+                  dateCreated: Timestamp.now().toDate(),
+                  imageUrl: downloadURL,
+                });
+                setIsModalVisible(false)
+                setUpdateModal(false)
+                notification.open({
+                  icon: <> <RiStarSmileFill className='mt-5 text-green-500'/>   </>,
+                  message:  <> <p className='text-green-500'> Pet Updated </p> </>,
+                  description:
+                  'Your announcement has been updated',
+                });
+              });
+            });
+      } catch (error) {
+        notification.open({
+          icon: <> <FaSadTear className='mt-5 text-red-500'/>   </>,
+          message:  <> <p className='text-red-500'> Error updating the documents </p> </>,
+          description:
+          'Please update the document again',
+        });
+    }
+      setLoading(false)
+    }, 1000)
+  }
+
+  console.log(form)
+
     return (
         <>
-    <div className='border bg-white shadow-2xl h-4/6' key={details.id}>
-      <img src={details.imageUrl} alt='pet' className='rounded-md w-full h-4/6' />
+    <div className='border bg-white shadow-2xl h-full' key={details.id}>
+      <img src={details.imageUrl} alt='pet' className='rounded-md w-full h-3/6' />
     <div className='w-3/4 py-3 flex flex-col pl-5'>
-      <h1 className='text-[#d95858] lg:text-2xl md:text-base font-bold capitalize'>
+      <h1 className='text-[#d95858] lg:text-2xl md:text-base font-bold capitalize truncate'>
       {details.petName}</h1>
-      <p className='lg:text-sm md:text-xs text-[#155e59] md:truncate capitalize '>
+      <p className='lg:text-sm md:text-xs text-[#155e59] md:truncate capitalize truncate '>
       {details.ownerName}
       </p>
         <button 
         onClick={showModal}
-        className="flex pb-5 text-[#d95858] font-bold hover:text-[#155e59] pt-4 lg:text-base md:text-xs md:font-medium">
+        className="flex  text-[#d95858] font-bold hover:text-[#155e59] pt-4 lg:text-base md:text-xs md:font-medium">
         <p className='pt-1'> Read Info </p> 
         </button>
     </div>
@@ -152,8 +260,19 @@ export const AnimalListCards = ({details}) => {
                             <p className="box row-start-6 row-end-6 col-start-2 col-end-4 text-[#2c2c2c] font-medium text-justify capitalize">{details.hasVaccinated}</p>
                             <p className="box row-start-7 row-end-7 col-start-1 col-end-1 text-[#155e59] font-semibold"> Pet Vaccine: </p>
                             <p className="box row-start-7 row-end-7 col-start-2 col-end-4 text-[#2c2c2c] font-medium text-justify capitalize">{
-                              details.hasVaccinated === 'Yes' ? 
-                              <p className='text-green-500'> {details.petVaccine} </p> 
+                              details.hasVaccinated === 'Yes' || !details.petVaccine ? 
+                              <p className='text-green-500'> {
+                                details.petVaccine.map((index) => (
+                                  <>
+                                    <p> {index} </p>
+                                  </>
+                                ))
+   
+                                } </p> 
+                              :
+
+                              details.hasVaccinated === 'Unsure' ? 
+                              ""
                               :
                               <p className='text-red-500'> Not Vaccinated </p>
                               }</p>
@@ -188,25 +307,22 @@ export const AnimalListCards = ({details}) => {
                       </div>
                     </Modal>
 
-                    <Modal 
+                    { /* Modal Add Animal */}
+
+
+
+                <Modal 
                       title={false} 
                       footer={false}
                       visible={updateModal} 
-                      onOk={okUpdate} 
                       closeIcon={true}
                       onCancel={cancelUpdate}
                       destroyOnClose={true}
                       style={{top:'10px'}}
                       >
                   <>
-                  <Form
-                    name="basic"
-                    labelCol={{ span: 0 }}
-                    wrapperCol={{ span: 30 }}
-                    initialValues={false}
-
-                    // onFinish={onFinish}
-                    // onFinishFailed={onFinishFailed}
+                  <form
+                    onSubmit={e => e.preventDefault(updatePet(details.id))}
                     autoComplete="off"
                 >
                 <div className='flex flex-col justify-center items-center text-center mt-5'>
@@ -220,67 +336,87 @@ export const AnimalListCards = ({details}) => {
                   name="name"
                   rules={[{ required: true, message: 'Please input pet name!' }]}
                 >
-                  <Input placeholder={details.name} className='capitalize'/>
+                  <Input placeholder="Pet's Name" className='capitalize'  
+                  value={form.petName}
+                  defaultValue={form.petName}
+                  disabled={loading}
+                  onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                  onChange={e => setForm({...form, petName: e.target.value})}/>
                 </Form.Item>
 
                  {/* Breed */}
                  <p className='text-[#2c2c2c] font-medium text-md pt-3 pb-2'> Breed</p> 
                 <Form.Item
                   name="breed"
+                 
                   rules={[{ required: true, message: 'Please input breed! or N/A if unsure' }]}
                 >
-                  <Input placeholder="Pet's Breed" className='capitalize'/>
+                  <Input placeholder="Pet's Breed" className='capitalize'
+                    onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                    value={form.petBreed}
+                    defaultValue={form.petBreed}
+                    disabled={loading}
+                    onChange={e => setForm({...form, petBreed: e.target.value}) } /> 
+               
                 </Form.Item>
 
                 {/* Pet Type */}
-                <p className='text-[#2c2c2c] font-medium text-md pt-3 pb-1'> Pet Type </p> 
-                <Form.Item
-                name="petType"
-                rules={[{ required: true, message: 'Please select pet type' }]}
-                >
-                <Radio.Group>
-                    <Radio value='cat'>Cat</Radio>
-                    <Radio value='dog'>Dog</Radio>
-                    <Radio value='other'>Other</Radio>
-                </Radio.Group>
-                </Form.Item>
+                <Form>
+                  <p className='text-[#2c2c2c] font-medium text-md pt-3 pb-1'> Pet Type </p> 
+                  <Form.Item
+                  name="petType"
+                  className='pb-2'
+                  rules={[{ required: true, message: 'Please select pet type' }]}
+                  >
+                  <Radio.Group 
+                  value={form.petType}
+                  disabled={loading}
+                  defaultValue={form.petType}
+                  onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                  onChange={e => setForm({...form, petType: e.target.value})}>
+                      <Radio value='cat'>Cat</Radio>
+                      <Radio value='dog'>Dog</Radio>
+                      <Radio value='other'>Other</Radio>
+                  </Radio.Group>
+                  </Form.Item>
+                </Form>
 
                 { /* Gender */ }
-                <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Pet's Gender </p> 
-                <Form.Item
-                  name="pet gender"
-                  rules={[{ required: true, message: 'Please select gender' }]}
-                >
-                  <Radio.Group name="radiogroup">
-                    <Radio value='lost'> Male </Radio>
-                    <Radio value='found'> Female</Radio>
-                    <Radio value='unsure'> Unsure</Radio>
-                  </Radio.Group>
-                </Form.Item>
+                <Form>
+                  <p className='text-[#2c2c2c] font-medium text-md pb-1 pt-2'> Pet's Gender </p> 
+                  <Form.Item
+                    name="pet gender"
+                    className='pb-2'
+                    rules={[{ required: true, message: 'Please select gender' }]}
+                  >
+                    <Radio.Group 
+                      value={form.petGender}
+                      defaultValue={form.petGender}
+                      disabled={loading}
+                      onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                      onChange={e => setForm({...form, petGender: e.target.value})}>
+                      <Radio value='male'> Male </Radio>
+                      <Radio value='female'> Female</Radio>
+                      <Radio value='unsure'> Unsure</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                </Form>
 
                  {/* Birthdate */}
                 <p className='text-[#2c2c2c] font-medium text-md pb-2 pt-2'> Pet's Birthdate </p> 
                 <Form.Item
-                    name="birthdate"
+                    name="date"
                     rules={[{ required: true, message: 'Please select birthdate' }]}
                 >
-                  <DatePicker format='MM-DD-YYYY' disabledDate={(current) => {
-                        let customDate = moment().format("MM-DD-YYYY");
-                        return current && current > moment(customDate, "MM-DD-YYYY");
-                        }} />
-                </Form.Item>
 
-                {/* Pet Type */}
-                <p className='text-[#2c2c2c] font-medium text-md pt-3 pb-1'> Has Vaccinated? </p> 
-                <Form.Item
-                name="hasVaccinated"
-                rules={[{ required: true, message: 'Please select yes or no' }]}
-                >
-                <Radio.Group>
-                    <Radio value='Yes'>Yes</Radio>
-                    <Radio value='No'>No</Radio>
-                    <Radio value='Unsure'>Unsure</Radio>
-                </Radio.Group>
+                    <DatePicker type='date'
+                        value={moment(form.petBirthdate)}
+                        defaultValue={moment(form.petBirthdate)}
+                        onChange={ pickDate }
+                        disabled={loading}
+                        onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                        disabledDate={currentDate}
+                        />
                 </Form.Item>
               
                 {/* Details */}
@@ -288,16 +424,82 @@ export const AnimalListCards = ({details}) => {
                 <Form.Item
                   name="description"
                 >
-                  <TextArea placeholder="Pet's Description (For Unique Identification)" />
+                  <TextArea placeholder="Pet's Description (For Unique Identification)" 
+                    value={form.petDetails}
+                    defaultValue={form.petDetails}
+                    disabled={loading}
+                    onChange={e => setForm({...form, petDetails: e.target.value})}
+                    onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                  />
                 </Form.Item>
+                <Form>
+                  <p className='text-[#2c2c2c] font-medium text-md pt-3 pb-1'> Has Vaccinated? </p> 
+                  <Form.Item
+                  name="hasVaccinated"
+                  rules={[{ required: true, message: 'Please select yes or no' }]}
+                  >
+                  <Radio.Group disabled={loading}  value={form.hasVaccinated}
+                              defaultValue={form.hasVaccinated}
+                              onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                              onChange={e => setForm({...form, hasVaccinated: e.target.value})}
+            >
+                      <Radio value='Yes'>Yes</Radio>
+                      <Radio value='No'>No</Radio>
+                      <Radio value='Unsure'>Unsure</Radio>
+                  </Radio.Group>
+                  </Form.Item>  
+                </Form>
+                 {/* Vaccinate */}
 
+              { form.hasVaccinated === 'Yes' ?
+                <>
+                  <p className='text-[#2c2c2c] font-medium text-md pt-3 pb-2'> Vaccinate </p> 
+
+                  {
+                    form.petVaccine.map((vaccine, i) => ( 
+                    <Form.Item preserve={false}>
+                      <Input placeholder="Pet's Vaccine" className='capitalize'
+                          key={i}
+                          disabled={loading}
+                          value={vaccine}
+                          required
+                          defaultValue={form.petVaccine}
+                          onChange={e => handleVaccine(e, i)}
+                          onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                      />
+                    </Form.Item>
+                    ))}
+
+                    <div className='flex justify-around pb-4'>
+                      <button type='button' 
+                      className={
+                        form.petVaccine < 2 ? 
+                        'bg-gray-200 text-[#2c2c2c] rounded-lg px-2 py-1 cursor-not-allowed'
+                        : 
+                        'bg-[#155e59] text-[white] rounded-lg px-2 py-1'
+                      } onClick={deleteVaccine}
+                      
+                        disabled={form.petVaccine < 2 || loading}
+                      > Delete Vaccine </button>
+                      <button type='button'  disabled={loading} className='bg-[#155e59] text-white rounded-lg px-2 py-1' onClick={handleVaccinecount}> Add Vaccine </button>
+                    </div>
+                </>
+              :
+              ""
+            }
                  {/* Owner Name */}
                  <p className='text-[#2c2c2c] font-medium text-md pb-2'> Owner's Name </p> 
                 <Form.Item
                   name="owner"
                   rules={[{ required: true, message: 'Please input owner name!' }]}
                 >
-                  <Input placeholder="Owners's Name" className='capitalize'/>
+                  <Input placeholder="Owners's Name" className='capitalize'
+                      value={form.ownerName}
+                      defaultValue={form.ownerName}
+                      disabled={loading}
+                      onChange={e => setForm({...form, ownerName: e.target.value})}
+                      onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                  />
                 </Form.Item>
 
                  {/* Owner Address */}
@@ -306,27 +508,44 @@ export const AnimalListCards = ({details}) => {
                   name="address"
                   rules={[{ required: true, message: 'Please input owner address!' }]}
                 >
-                  <Input.TextArea placeholder="Owners's Address" className='capitalize'/>
+                  <Input.TextArea placeholder="Owners's Address" className='capitalize'
+                      value={form.ownerAddress}
+                      defaultValue={form.ownerAddress}
+                      disabled={loading}
+                      onChange={e => setForm({...form, ownerAddress: e.target.value})}
+                    onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}/>
                 </Form.Item>
 
                 { /* Owner Contact */}
 
-                <p className='text-[#2c2c2c] font-medium text-md pb-1'> Contact Number (for Updates) </p> 
+                <p className='text-[#2c2c2c] font-medium text-md pb-1'> Contact Number (For Updates) </p> 
                 <Form.Item
                   name="contact"
+                  className='pb-2'
                   rules={[{ required: true, message: 'Please input contact!' }]}
                 >
-                  <InputNumber type="numbers" 
-                    style={{ width: '100%' }} 
-                    minLength="11"
-                    placeholder='Contact No'
-                    controls={false}
-                    maxLength="11"/>
+                   <Input type='number' placeholder='Contact No'
+                      value={form.ownerContact}
+                      defaultValue={form.ownerContact}
+                      disabled={loading}
+                      minLength="11"
+                      controls={false}
+                      maxLength='11'
+                      onChange={e => setForm({...form, ownerContact: e.target.value})}
+                      onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
+                  />
                 </Form.Item>
+
+                <div className='py-3 pb-3'>
+                  <p className='text-[#2c2c2c] font-medium text-md pb-1'> Pet's Picture (Landscape for Best Preview) </p> 
+                  <input type='file' disabled={loading} name='image' accept="image/*" onChange={ handleImage }/>
+                </div>
+
                 <div className='flex justify-around pr-12 pt-2' >
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <button htmlType="submit" className='rounded-full text-[#155e59] hover:text-white hover:bg-[#155e59] text-md px-6 py-2'
-                    onClick={handleOk} 
+                  <button type="button" className='rounded-full text-[#155e59] hover:text-white hover:bg-[#155e59] text-md px-6 py-2'
+                    onClick={okUpdate} 
+                    disabled={loading}
                     style={{ 
                       borderWidth: '0.5px',
                       borderColor: '#155e59'
@@ -335,13 +554,23 @@ export const AnimalListCards = ({details}) => {
                     Cancel
                   </button>
                 </Form.Item>
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <button htmlType="submit" onClick={showPromiseConfirm} className='rounded-full bg-[#155e59] text-md text-white px-5 py-2 hover:bg-[#d95858]'>
-                    Update
+                <Form.Item>
+                  <button type="submit" 
+                  className={
+                    loading ? 
+                    'rounded-full bg-[#155e59] text-md text-white opacity-50 px-5 py-2 hover:bg-[#d95858]'
+                    :
+                    'rounded-full bg-[#155e59] text-md text-white px-5 py-2 hover:bg-[#d95858]'}>
+                    {
+                       loading ? 
+                       <p> Updating ... </p> 
+                       :
+                       <p> Update Pet </p> 
+                    }
                   </button>
                 </Form.Item>
               </div>
-                </Form>
+                </form>
                   </>
                 </Modal>
   </>

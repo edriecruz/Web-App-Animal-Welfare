@@ -18,7 +18,7 @@ import {v4 as uuidv4} from 'uuid'
 
 // Database
 import { db, storage } from '../firebase-config'
-import {collection, onSnapshot, doc, addDoc, serverTimestamp, Timestamp,  orderBy, query} from 'firebase/firestore'
+import {collection, onSnapshot,  addDoc, serverTimestamp, Timestamp,  orderBy, query} from 'firebase/firestore'
 import {ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 const { TextArea } = Input;
@@ -155,6 +155,7 @@ const AnnouncementAdmin  = () => {
               const prog = Math.round(
                 (snapshot.bytesTransferred / snapshot.totalBytes) * 100
               );
+              console.log(prog)
             },
             (error) => console.log(error),
             () => {
@@ -258,7 +259,7 @@ const AnnouncementAdmin  = () => {
                 </div>
         </div>
 
-        { /* Modal Add Animal */}
+        { /* Modal Add Announcement */}
                 <Modal 
                       title={false} 
                       footer={false}

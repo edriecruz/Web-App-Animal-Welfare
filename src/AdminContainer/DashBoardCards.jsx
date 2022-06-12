@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import infobg from '../assets/infobg.png'
 import {BiBone} from 'react-icons/bi'
 import {GiFishbone} from 'react-icons/gi'
@@ -6,7 +6,39 @@ import {IoIosPaw} from 'react-icons/io'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { vaccinated, vaccinated2 } from '../LandingContainer/data'
 
+// Database
+import { db } from '../firebase-config'
+import {collection, onSnapshot, query, where} from 'firebase/firestore'
+
+
 const DashBoardCards = () => {
+
+    const [Dog_Animal_Profile, setDog_Animal_Profile] = useState([])
+    const [Cat_Animal_Profile, setCat_Animal_Profile] = useState([])
+    const animalProfileCollectionRef = collection(db, "Animal_Profile")
+
+    const totalPopulation = Dog_Animal_Profile.length + Cat_Animal_Profile.length;
+
+    useEffect(() => {   
+      const filterDog = query(animalProfileCollectionRef, where("petType", "==", "dog"));
+      onSnapshot(filterDog, animalProfileCollectionRef, snapshot => {
+        setDog_Animal_Profile(snapshot.docs.map(doc => {
+          return{
+            id: doc.id,
+            ...doc.data()
+          }
+        }))
+      })
+      const filterCat = query(animalProfileCollectionRef, where("petType", "==", "cat"));
+      onSnapshot(filterCat, animalProfileCollectionRef, snapshot => {
+        setCat_Animal_Profile(snapshot.docs.map(doc => {
+          return{
+            id: doc.id,
+            ...doc.data()
+          }
+        }))
+      })
+    }, [])
 
     return (
         <>  
@@ -27,21 +59,23 @@ const DashBoardCards = () => {
                             <h1 className='flex justify-center text-center pt-2 font-medium text-base'> Dog Population </h1>
                             <div className='flex justify-center items-center text-center my-5'>
                                 <BiBone size='40px'/>
-                                <h1 className='font-semibold text-2xl px-3'> 159 </h1> 
+                                <h1 className='font-semibold text-2xl px-3'>
+                                    {Dog_Animal_Profile.length}
+                                </h1> 
                             </div>
                         </div>
                         <div className='bg-white h-28 rounded-lg shadow-lg lg:w-48 md:w-36'>
                             <h1 className='flex justify-center text-center pt-2 font-medium text-base'> Cat Population </h1>
                             <div className='flex justify-center items-center text-center my-5'>
                                 <GiFishbone size='40px'/>
-                                <h1 className='font-semibold text-2xl px-3'> 159 </h1> 
+                                <h1 className='font-semibold text-2xl px-3'> {Cat_Animal_Profile.length} </h1> 
                             </div>
                         </div>
                         <div className='bg-white h-28 rounded-lg shadow-lg lg:w-48 md:w-36'>
                             <h1 className='flex justify-center text-center pt-2 font-medium text-base'> Total Population </h1>
                             <div className='flex justify-center items-center text-center my-5'>
                                 <IoIosPaw size='40px'/>
-                                <h1 className='font-semibold text-2xl px-3'> 159 </h1> 
+                                <h1 className='font-semibold text-2xl px-3'> {totalPopulation} </h1> 
                             </div>
                         </div>
                     </div>
