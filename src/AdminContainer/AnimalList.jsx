@@ -23,7 +23,7 @@ import moment from 'moment';
 
 // Database
 import { db, storage } from '../firebase-config'
-import {collection, onSnapshot, addDoc, serverTimestamp, orderBy, query} from 'firebase/firestore'
+import {collection, onSnapshot, addDoc, getDocs, serverTimestamp, orderBy, query} from 'firebase/firestore'
 import {ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 const { TextArea } = Input;
@@ -33,52 +33,6 @@ const AnimalList  = () => {
 
     const isNotActive = 'flex items-center px-2 gap-3 text-base font-medium text-[#155e59] capitalize bg-white rounded-lg py-1 px-2 hover:text-[#d95858]'
     const buttonStyle = 'flex justify-center items-center text-white lg:mr-10 md:mr-10 mt-5 px-3 gap-3 text-base font-medium text-[#155e59] capitalize bg-white rounded-lg hover:text-[#d95858]'
-
-    const info = (
-        <Menu style={{ padding: 0, marginTop:'15px'}}
-    
-        >
-          <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="1">
-              <Link 
-                  to="lostfound"
-                  spy={true} smooth={true} offset={-100} duration={500}
-              >
-                  <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
-                      <IoIosPaw />
-                      <span className="ml-3">
-                        by Pet Type
-                      </span>
-                  </div>
-              </Link>
-          </Menu.Item>
-          <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="1">
-              <Link 
-                  to="lostfound"
-                  spy={true} smooth={true} offset={-100} duration={500}
-              >
-                  <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
-                      <IoIosPaw />
-                      <span className="ml-3">
-                      by Pet's Name
-                      </span>
-                  </div>
-              </Link>
-          </Menu.Item>
-          <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="1">
-              <Link 
-                  to="lostfound"
-                  spy={true} smooth={true} offset={-100} duration={500}
-              >
-                  <div className='flex justify-start font-medium items-center'>
-                      <IoIosPaw />
-                      <span className="ml-3">
-                      by Date Reported
-                      </span>
-                  </div>
-              </Link>
-          </Menu.Item>    
-        </Menu>
-      );
 
       const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -92,6 +46,7 @@ const AnimalList  = () => {
     
       const [loading, setLoading] = useState(false)
       const [Animal_Profile, setAnimal_Profile] = useState([])
+      const [search, setSearch] = useState("")
       const [, setProgress] = useState(0)
       const [image, setImage] = useState(null)
       const [form, setForm] = useState({
@@ -111,20 +66,26 @@ const AnimalList  = () => {
         imageUrl: "",
       })
 
-      const animalProfileCollectionRef = collection(db, "Animal_Profile")
-
+      const animalProfileCollectionRef = collection(db, "Animal_Profile");
+      
       useEffect(() => {
+
         const q = query(animalProfileCollectionRef, orderBy("dateCreated", "desc"));
-        onSnapshot(q, animalProfileCollectionRef, snapshot => {
-          
+        const p = query(animalProfileCollectionRef, orderBy("petName", "asc"));
+        const o = query(animalProfileCollectionRef, orderBy("ownerName", "asc"));
+
+        onSnapshot(p, animalProfileCollectionRef, snapshot => {
           setAnimal_Profile(snapshot.docs.map(doc => {
             return{
               id: doc.id,
               ...doc.data()
             }
-          }))
+   
+          }).filter((users) =>
+          users.petName.toLowerCase().includes(search.toLowerCase())))
         })
-      }, [])
+
+      }, [search])
       
     function pickDate(date, dateString) {
       setForm({...form, petBirthdate: dateString})
@@ -267,6 +228,55 @@ const AnimalList  = () => {
 
     }
 
+  
+
+    const info = (
+      <Menu style={{ padding: 0, marginTop:'15px'}}
+  
+      >
+        <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="1">
+            <button 
+            // onClick={sortingPetName}
+                spy={true} smooth={true} offset={-100} duration={500}
+            >
+                <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
+                    <IoIosPaw />
+                    <span className="ml-3">
+                    by Pet's Name
+                    </span>
+                </div>
+            </button>
+        </Menu.Item>
+        <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="1">
+            <button 
+                // onClick={sorting('petOwner')}
+                spy={true} smooth={true} offset={-100} duration={500}
+            >
+                <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
+                    <IoIosPaw />
+                    <span className="ml-3">
+                    by Pet's Owner
+                    </span>
+                </div>
+            </button>
+        </Menu.Item>
+        <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="1">
+            <button 
+                // onClick={sorting('petName')}
+                spy={true} smooth={true} offset={-100} duration={500}
+            >
+                <div className='flex justify-start font-medium items-center'>
+                    <IoIosPaw />
+                    <span className="ml-3">
+                    by Date Created
+                    </span>
+                </div>
+            </button>
+        </Menu.Item>    
+      </Menu>
+    );
+
+
   return (
      <>
        < div className='min-w-screen'>
@@ -281,7 +291,9 @@ const AnimalList  = () => {
                     <h1 className='pt-7 text-xl font-semibold text-white md:text-base md:mt-1 lg:text-xl lg:ml-16 md:ml-10'> Animal Profile List </h1> 
                     <div className="pt-6 relative text-gray-600 lg:mr-16 md:mr-3">
                         <input className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
-                            type="search" name="search" placeholder="Search" />
+                            type="search" name="search" placeholder="Search Pet Name" 
+                            onChange={(e)=>{setSearch(e.target.value)}}
+                            />
                         <button type="submit" className="absolute right-0 top-0 mt-9 mr-4"> 
                             <FcSearch />
                         </button>

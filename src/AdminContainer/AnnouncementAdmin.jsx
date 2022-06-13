@@ -89,6 +89,7 @@ const AnnouncementAdmin  = () => {
       const [loading, setLoading] = useState(false);
       const [Announcement, setAnnouncement] = useState([])
       const [image, setImage] = useState(null)
+      const [search, setSearch] = useState("")
       const [form, setForm] = useState({
 
           announcementId: announcementId,
@@ -110,9 +111,10 @@ const AnnouncementAdmin  = () => {
               id: doc.id,
               ...doc.data()
             }
-          }))
+          }).filter((users) =>
+          users.title.toLowerCase().includes(search.toLowerCase())))
         })
-      }, [])
+      }, [search])
 
 
       // Handle Image
@@ -219,7 +221,8 @@ const AnnouncementAdmin  = () => {
                     <h1 className='pt-7 text-xl font-semibold text-white md:text-base md:mt-1 lg:text-xl lg:ml-16 md:ml-10'> Pet Announcement </h1> 
                     <div className="pt-6 relative text-gray-600 lg:mr-16 md:mr-3">
                         <input className="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
-                            type="search" name="search" placeholder="Search" />
+                            type="search" name="search" placeholder="Search Title"
+                            onChange={(e)=>{setSearch(e.target.value)}} />
                         <button type="submit" className="absolute right-0 top-0 mt-9 mr-4"> 
                             <FcSearch />
                         </button>

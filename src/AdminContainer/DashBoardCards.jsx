@@ -3,8 +3,12 @@ import infobg from '../assets/infobg.png'
 import {BiBone} from 'react-icons/bi'
 import {GiFishbone} from 'react-icons/gi'
 import {IoIosPaw} from 'react-icons/io'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { vaccinated, vaccinated2 } from '../LandingContainer/data'
+
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Pie } from 'react-chartjs-2';
+
+
+
 
 // Database
 import { db } from '../firebase-config'
@@ -13,8 +17,14 @@ import {collection, onSnapshot, query, where} from 'firebase/firestore'
 
 const DashBoardCards = () => {
 
+    ChartJS.register(ArcElement, Tooltip, Legend);
+
     const [Dog_Animal_Profile, setDog_Animal_Profile] = useState([])
     const [Cat_Animal_Profile, setCat_Animal_Profile] = useState([])
+    const [Other_Animal_Profile, setOther_Animal_Profile] = useState([])
+    const [vaccinated, setVaccinated] = useState([])
+    const [unvaccinated, setUnvaccinated] = useState([])
+    const [unsureVaccinated, setUnsureVaccinated] = useState([])
     const animalProfileCollectionRef = collection(db, "Animal_Profile")
 
     const totalPopulation = Dog_Animal_Profile.length + Cat_Animal_Profile.length;
@@ -38,7 +48,83 @@ const DashBoardCards = () => {
           }
         }))
       })
+      const filterOther = query(animalProfileCollectionRef, where("petType", "==", "other"));
+      onSnapshot(filterOther, animalProfileCollectionRef, snapshot => {
+        setOther_Animal_Profile(snapshot.docs.map(doc => {
+          return{
+            id: doc.id,
+            ...doc.data()
+          }
+        }))
+      })
+      const vaccinated = query(animalProfileCollectionRef, where("hasVaccinated", "==", "Yes"));
+      onSnapshot(vaccinated, animalProfileCollectionRef, snapshot => {
+        setVaccinated(snapshot.docs.map(doc => {
+          return{
+            id: doc.id,
+            ...doc.data()
+          }
+        }))
+      })
+      const unvaccinated = query(animalProfileCollectionRef, where("hasVaccinated", "==", "No"));
+      onSnapshot(unvaccinated, animalProfileCollectionRef, snapshot => {
+        setUnvaccinated(snapshot.docs.map(doc => {
+          return{
+            id: doc.id,
+            ...doc.data()
+          }
+        }))
+      })
+      const unsure = query(animalProfileCollectionRef, where("hasVaccinated", "==", "Unsure"));
+      onSnapshot(unsure, animalProfileCollectionRef, snapshot => {
+        setUnsureVaccinated(snapshot.docs.map(doc => {
+          return{
+            id: doc.id,
+            ...doc.data()
+          }
+        }))
+      })
     }, [])
+   
+
+    const vaccinate = {
+        labels: [
+            'Unvaccinated',
+            'Vaccinated',
+            'Unsure'
+        ],
+        datasets: [{
+            label: 'My First Dataset',
+            data: [unvaccinated.length, vaccinated.length, unsureVaccinated.length],
+            backgroundColor: [
+            'rgb(217, 88, 88)',
+            'rgb(21, 94, 89)',
+            'rgb(44, 44, 44)'
+            ],
+            hoverOffset: 4
+        }]
+        };
+
+        
+    const petType = {
+        labels: [
+            'Dog',
+            'Cat',
+            'Other'
+        ],
+        datasets: [{
+            label: 'My First Dataset',
+            data: [Dog_Animal_Profile.length, Cat_Animal_Profile.length, Other_Animal_Profile.length],
+            backgroundColor: [
+            'rgb(21, 94, 89)',
+            'rgb(217, 88, 88)',
+            'rgb(44, 44, 44)'
+            ],
+            hoverOffset: 4
+        }]
+        };
+
+
 
     return (
         <>  
@@ -81,80 +167,12 @@ const DashBoardCards = () => {
                     </div>
                 </div>
 
-                <div className='md:hidden lg:flex flex-row justify-center h-3/5 bg-gray-200 py-10 overflow-x-auto'>
-                    <div className='bg-white shadow-lg py-5 my-5 ml-12' style={{width: 800, height: 400}}>
-                        <BarChart width={700} height={300} data={vaccinated} className='pt-10 px-10 mx-10'
-                         margin={{
-                            top: 5,
-                            right: 50,
-                            bottom: 5,
-                        }}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend verticalAlign='top' iconType={"wye"}/>
-                            <Bar dataKey="Vaccinated_Dogs" fill="#155e59" />
-                            <Bar dataKey="Vaccinated_Cats" fill="#d95858" />
-                        </BarChart>
-                        
+                <div className='flex lg:flex-row sm:flex-col items-center justify-center'>
+                    <div className='lg:w-1/3 sm:w-2/3 h-full lg:ml-20 py-10'>
+                        <Pie data={vaccinate} />
                     </div>
-                </div>
-                <div className='md:hidden lg:flex flex-row justify-center h-3/5 bg-gray-200 pb-10 overflow-x-auto'>
-                    <div className='bg-white shadow-lg py-5 my-5 ml-12' style={{width: 800, height: 400}}>
-                        <BarChart width={700} height={300} data={vaccinated2} className='pt-10 px-10 mx-10'
-                         margin={{
-                            top: 5,
-                            right: 50,
-                            bottom: 5,
-                        }}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend verticalAlign='top' iconType={"wye"}/>
-                            <Bar dataKey="Vaccinated_Dogs" fill="#155e59" />
-                            <Bar dataKey="Vaccinated_Cats" fill="#d95858" />
-                        </BarChart>
-                        
-                    </div>
-                </div>
-                
-
-                {/* Medium Devices*/}
-
-                <div className='md:flex-col lg:hidden flex justify-center md:items-center h-3/5 bg-gray-200 py-10 overflow-x-auto'>
-                    <div className='bg-white shadow-lg py-5 my-5' style={{width: 400, height: 400}}>
-                        <BarChart width={400} height={300} data={vaccinated} className='pt-10 mr-10'
-                         margin={{
-                            top: 5,
-                            right: 50,
-                            bottom: 5,
-                        }}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend verticalAlign='top' iconType={"wye"}/>
-                            <Bar dataKey="Vaccinated_Dogs" fill="#155e59" />
-                            <Bar dataKey="Vaccinated_Cats" fill="#d95858" />
-                        </BarChart>
-                    </div>
-                    <div className='bg-white shadow-lg py-5 my-5' style={{width: 400, height: 400}}>
-                        <BarChart width={400} height={300} data={vaccinated2} className='pt-10 mr-10'
-                         margin={{
-                            top: 5,
-                            right: 50,
-                            bottom: 5,
-                        }}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend verticalAlign='top' iconType={"wye"}/>
-                            <Bar dataKey="Vaccinated_Dogs" fill="#155e59" />
-                            <Bar dataKey="Vaccinated_Cats" fill="#d95858" />
-                        </BarChart>
+                    <div className='lg:w-1/3 sm:w-2/3 h-full lg:ml-28 py-10'>
+                        <Pie data={petType}/>
                     </div>
                 </div>
             </div>

@@ -207,8 +207,6 @@ const handleImage = e => {
     }, 1000)
   }
 
-  console.log(form)
-
     return (
         <>
     <div className='border bg-white shadow-2xl h-full' key={details.id}>
@@ -241,7 +239,7 @@ const handleImage = e => {
                           
                       <div className='flex flex-col justify-start items-left text-left py-3 px-3'>
                           <div className='flex justify-center'>
-                            <p className='text-[#d95858] text-3xl font-bold tracking-wide capitalize'> {details.petName } </p> 
+                            <p className='text-[#d95858] text-3xl font-bold tracking-wide capitalize truncate'> {details.petName } </p> 
 
                           </div>
                             <p className='text-[#2c2c2c] text-base font-semibold pt-5'>Animal Profile </p> 
@@ -538,7 +536,7 @@ const handleImage = e => {
 
                 <div className='py-3 pb-3'>
                   <p className='text-[#2c2c2c] font-medium text-md pb-1'> Pet's Picture (Landscape for Best Preview) </p> 
-                  <input type='file' disabled={loading} name='image' accept="image/*" onChange={ handleImage }/>
+                  <input type='file' disabled={loading} required name='image' accept="image/*" onChange={ handleImage }/>
                 </div>
 
                 <div className='flex justify-around pr-12 pt-2' >

@@ -293,6 +293,7 @@ const updateOk = () => {
                   <p className='text-[#2c2c2c] font-medium text-md pb-1'> Announcement </p> 
                   <input type='file' name='image' 
                      disabled={loading} accept="image/*"
+                     required
                     onChange={ handleImage }
                   />
                 </div>
