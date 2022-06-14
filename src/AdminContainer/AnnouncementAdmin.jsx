@@ -30,51 +30,7 @@ const AnnouncementAdmin  = () => {
     const isNotActive = 'flex items-center px-2 gap-3 text-base font-medium text-[#155e59] capitalize bg-white rounded-lg py-1 px-2 hover:text-[#d95858]'
     const buttonStyle = 'flex justify-center items-center text-white lg:ml-16 md:ml-10 mt-5 px-3 gap-3 text-base font-medium text-[#155e59] capitalize bg-white rounded-lg hover:text-[#d95858]'
 
-    const info = (
-        <Menu style={{ padding: 0, marginTop:'15px'}}
-    
-        >
-          <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="1">
-              <Link 
-                  to="lostfound"
-                  spy={true} smooth={true} offset={-100} duration={500}
-              >
-                  <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
-                      <IoIosPaw />
-                      <span className="ml-3">
-                        by Date
-                      </span>
-                  </div>
-              </Link>
-          </Menu.Item>
-          <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="1">
-              <Link 
-                  to="lostfound"
-                  spy={true} smooth={true} offset={-100} duration={500}
-              >
-                  <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
-                      <IoIosPaw />
-                      <span className="ml-3">
-                      by Title
-                      </span>
-                  </div>
-              </Link>
-          </Menu.Item>
-          <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="1">
-              <Link 
-                  to="lostfound"
-                  spy={true} smooth={true} offset={-100} duration={500}
-              >
-                  <div className='flex justify-start font-medium items-center'>
-                      <IoIosPaw />
-                      <span className="ml-3">
-                      by Author
-                      </span>
-                  </div>
-              </Link>
-          </Menu.Item>    
-        </Menu>
-      );
+  
 
       const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -88,6 +44,7 @@ const AnnouncementAdmin  = () => {
 
       const [loading, setLoading] = useState(false);
       const [Announcement, setAnnouncement] = useState([])
+
       const [image, setImage] = useState(null)
       const [search, setSearch] = useState("")
       const [form, setForm] = useState({
@@ -114,7 +71,97 @@ const AnnouncementAdmin  = () => {
           }).filter((users) =>
           users.title.toLowerCase().includes(search.toLowerCase())))
         })
+       
       }, [search])
+
+
+      
+
+
+    // Sorting
+    const [order, setOrder] = useState('asc')
+
+    const sorting = (col) => {
+      if (order === 'asc'){
+        const sorted = [...Announcement].sort((a,b) =>
+          a[col].toLowerCase() > b[col].toLowerCase() ? 1 : -1
+          );
+          setAnnouncement(sorted);
+          setOrder("dsc")
+        
+      }
+      if (order === 'dsc') {
+        const sorted = [...Announcement].sort((a,b) => 
+          a[col].toLowerCase() < b[col].toLowerCase() ? 1 : -1
+          );
+         setAnnouncement(sorted);
+          setOrder("asc")
+      }
+    }
+    
+
+    const info = (
+      <Menu style={{ padding: 0, marginTop:'15px'}}
+  
+      >
+      
+        <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="1">
+        <button
+           onClick={() => sorting('title')}
+           >
+                <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
+                    <IoIosPaw />
+                    <span className="ml-3">
+                    by Title
+                    </span>
+                </div>
+            </button>
+        </Menu.Item>
+        <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="2">
+        <button
+           onClick={() => sorting('author')}
+           >
+                <div className='flex justify-start font-medium items-center'>
+                    <IoIosPaw />
+                    <span className="ml-3">
+                    by Author
+                    </span>
+                </div>
+            </button>
+        </Menu.Item>    
+      </Menu>
+    );
+
+    const filterBy = (
+      <Menu style={{ padding: 0, marginTop:'15px'}}
+  
+      >
+        <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="1">
+            <button 
+            onClick={() => sorting('petName')}
+            >
+                <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
+                    <IoIosPaw />
+                    <span className="ml-3">
+                    by Pet Type
+                    </span>
+                </div>
+            </button>
+        </Menu.Item>
+        <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="2">
+            <button 
+              onClick={() => sorting('ownerName')}
+            >
+                <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
+                    <IoIosPaw />
+                    <span className="ml-3">
+                    by Pet Gender
+                    </span>
+                </div>
+            </button>
+        </Menu.Item>
+      </Menu>
+    );
 
 
       // Handle Image
@@ -205,7 +252,6 @@ const AnnouncementAdmin  = () => {
   
       }
 
-      console.log(form)
   return (
      
      <>
@@ -229,25 +275,39 @@ const AnnouncementAdmin  = () => {
                     </div>
                 </div>
                 <div className='flex justify-between'>
-                    <button className={buttonStyle} onClick={showModal}>
-                        Add Announcement
+                    <button className={'flex justify-center items-center text-white lg:ml-16 md:ml-10 mt-5 px-3 gap-3 text-base font-medium text-[#155e59] capitalize bg-white rounded-lg hover:text-[#d95858]'} onClick={showModal}>
+                        Add Animal
                     </button>
-                    <Dropdown 
-                        overlay={info} 
-                        placement='bottomRight' 
-                        className='flex justify-center items-center text-white lg:mr-16 md:mr-3 mt-5'
-                        trigger={'click'}  
-                    >
-                        <Link 
-                        to=""
-                        className={isNotActive}
-                        >
-                                        <span>
-                            Sort By
-                        </span>
-                        <AiFillCaretDown />
-                        </Link>
-                    </Dropdown>
+                    <div className='flex justify-end'> 
+                      <Dropdown 
+                          overlay={filterBy} 
+                          placement='bottomCenter' 
+                          className='flex justify-center items-center text-white lg:mr-12 md:mr-12 mt-5'
+                      >
+                          <button
+                          className={isNotActive}
+                          >
+                                          <span>
+                            Filter By
+                          </span>
+                          <AiFillCaretDown />
+                          </button>
+                      </Dropdown>
+                      <Dropdown 
+                          overlay={info} 
+                          placement='bottomRight' 
+                          className='flex justify-center items-center text-white lg:mr-16 md:mr-3 mt-5'
+                      >
+                          <button
+                          className={isNotActive}
+                          >
+                                          <span>
+                              Sort By
+                          </span>
+                          <AiFillCaretDown />
+                          </button>
+                      </Dropdown>
+                    </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mx-auto px-10 lg:ml-5 md:ml-2 py-6 mt-10" style={{
                     maxWidth: '1400px'

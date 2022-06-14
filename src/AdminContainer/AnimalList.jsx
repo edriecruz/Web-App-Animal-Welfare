@@ -23,7 +23,7 @@ import moment from 'moment';
 
 // Database
 import { db, storage } from '../firebase-config'
-import {collection, onSnapshot, addDoc, getDocs, serverTimestamp, orderBy, query} from 'firebase/firestore'
+import {collection, onSnapshot, addDoc, getDocs, serverTimestamp, orderBy, query, where} from 'firebase/firestore'
 import {ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 const { TextArea } = Input;
@@ -67,22 +67,24 @@ const AnimalList  = () => {
       })
 
       const animalProfileCollectionRef = collection(db, "Animal_Profile");
-      
+    
       useEffect(() => {
-
+        
         const q = query(animalProfileCollectionRef, orderBy("dateCreated", "desc"));
-        const p = query(animalProfileCollectionRef, orderBy("petName", "asc"));
-        const o = query(animalProfileCollectionRef, orderBy("ownerName", "asc"));
-
-        onSnapshot(p, animalProfileCollectionRef, snapshot => {
+        onSnapshot(q, animalProfileCollectionRef, snapshot => {
           setAnimal_Profile(snapshot.docs.map(doc => {
             return{
               id: doc.id,
               ...doc.data()
             }
    
+            //query 
+            
           }).filter((users) =>
-          users.petName.toLowerCase().includes(search.toLowerCase())))
+          users.petName.toLowerCase().includes(search.toLowerCase())  ||
+          users.ownerName.toLowerCase().includes(search.toLowerCase())
+          )
+          )
         })
 
       }, [search])
@@ -224,11 +226,30 @@ const AnimalList  = () => {
           
         );
 
-     }, 2000)
+     }, 2000)}
 
+
+    // Sorting
+
+    const [order, setOrder] = useState('asc')
+
+    const sorting = (col) => {
+      if (order === 'asc'){
+        const sorted = [...Animal_Profile].sort((a,b) =>
+          a[col].toLowerCase() > b[col].toLowerCase() ? 1 : -1
+          );
+          setAnimal_Profile(sorted);
+          setOrder("dsc")
+        
+      }
+      if (order === 'dsc') {
+        const sorted = [...Animal_Profile].sort((a,b) => 
+          a[col].toLowerCase() < b[col].toLowerCase() ? 1 : -1
+          );
+         setAnimal_Profile(sorted);
+          setOrder("asc")
+      }
     }
-
-  
 
     const info = (
       <Menu style={{ padding: 0, marginTop:'15px'}}
@@ -236,8 +257,7 @@ const AnimalList  = () => {
       >
         <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="1">
             <button 
-            // onClick={sortingPetName}
-                spy={true} smooth={true} offset={-100} duration={500}
+            onClick={() => sorting('petName')}
             >
                 <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
                     <IoIosPaw />
@@ -247,10 +267,9 @@ const AnimalList  = () => {
                 </div>
             </button>
         </Menu.Item>
-        <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="1">
+        <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="2">
             <button 
-                // onClick={sorting('petOwner')}
-                spy={true} smooth={true} offset={-100} duration={500}
+              onClick={() => sorting('ownerName')}
             >
                 <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
                     <IoIosPaw />
@@ -260,22 +279,51 @@ const AnimalList  = () => {
                 </div>
             </button>
         </Menu.Item>
-        <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="1">
-            <button 
-                // onClick={sorting('petName')}
-                spy={true} smooth={true} offset={-100} duration={500}
-            >
-                <div className='flex justify-start font-medium items-center'>
-                    <IoIosPaw />
-                    <span className="ml-3">
-                    by Date Created
-                    </span>
-                </div>
-            </button>
-        </Menu.Item>    
       </Menu>
     );
 
+    const filterBy = (
+      <Menu style={{ padding: 0, marginTop:'15px'}}
+  
+      >
+        <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="1">
+            <button 
+         
+            >
+                <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
+                    <IoIosPaw />
+                    <span className="ml-3">
+                    by Pet Type
+                    </span>
+                </div>
+            </button>
+        </Menu.Item>
+        <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="2">
+            <button 
+              onClick={() => sorting('ownerName')}
+            >
+                <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
+                    <IoIosPaw />
+                    <span className="ml-3">
+                    by Pet Vaccine
+                    </span>
+                </div>
+            </button>
+        </Menu.Item>
+        <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="3">
+            <button 
+              onClick={() => sorting('ownerName')}
+            >
+                <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
+                    <IoIosPaw />
+                    <span className="ml-3">
+                    by Pet Gender
+                    </span>
+                </div>
+            </button>
+        </Menu.Item>
+      </Menu>
+    );
 
   return (
      <>
@@ -299,26 +347,40 @@ const AnimalList  = () => {
                         </button>
                     </div>
                 </div>
-                <div className='flex justify-end'>
-                    <button className={buttonStyle} onClick={showModal}>
+                <div className='flex justify-between'>
+                    <button className={'flex justify-center items-center text-white lg:ml-16 md:ml-10 mt-5 px-3 gap-3 text-base font-medium text-[#155e59] capitalize bg-white rounded-lg hover:text-[#d95858]'} onClick={showModal}>
                         Add Animal
                     </button>
-                    <Dropdown 
-                        overlay={info} 
-                        placement='bottomRight' 
-                        className='flex justify-center items-center text-white lg:mr-16 md:mr-3 mt-5'
-                        trigger={'click'}  
-                    >
-                        <Link 
-                        to=""
-                        className={isNotActive}
-                        >
-                                        <span>
-                            Sort By
-                        </span>
-                        <AiFillCaretDown />
-                        </Link>
-                    </Dropdown>
+                    <div className='flex justify-end'> 
+                      <Dropdown 
+                          overlay={filterBy} 
+                          placement='bottomCenter' 
+                          className='flex justify-center items-center text-white lg:mr-12 md:mr-12 mt-5'
+                      >
+                          <button
+                          className={isNotActive}
+                          >
+                                          <span>
+                            Filter By
+                          </span>
+                          <AiFillCaretDown />
+                          </button>
+                      </Dropdown>
+                      <Dropdown 
+                          overlay={info} 
+                          placement='bottomRight' 
+                          className='flex justify-center items-center text-white lg:mr-16 md:mr-3 mt-5'
+                      >
+                          <button
+                          className={isNotActive}
+                          >
+                                          <span>
+                              Sort By
+                          </span>
+                          <AiFillCaretDown />
+                          </button>
+                      </Dropdown>
+                    </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mx-auto px-10 lg:ml-5 md:ml-2 py-6 mt-10">
                     {Animal_Profile.map((user) => (
