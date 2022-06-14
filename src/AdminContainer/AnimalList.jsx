@@ -20,7 +20,7 @@ import { Menu, Dropdown, DatePicker, notification} from 'antd';
 import { Modal, Radio, Form, Input } from 'antd';
 import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
-
+  import { Pagination } from 'antd';
 // Database
 import { db, storage } from '../firebase-config'
 import {collection, onSnapshot, doc, addDoc, serverTimestamp, orderBy, query} from 'firebase/firestore'
@@ -90,6 +90,9 @@ const AnimalList  = () => {
           setIsModalVisible(false);
       };
     
+  
+
+
       const [loading, setLoading] = useState(false)
       const [Animal_Profile, setAnimal_Profile] = useState([])
       const [progress, setProgress] = useState(0)
@@ -114,6 +117,7 @@ const AnimalList  = () => {
       const animalProfileCollectionRef = collection(db, "Animal_Profile")
 
       useEffect(() => {
+
         const q = query(animalProfileCollectionRef, orderBy("dateCreated", "desc"));
         onSnapshot(q, animalProfileCollectionRef, snapshot => {
           
@@ -126,6 +130,35 @@ const AnimalList  = () => {
         })
       }, [])
       
+
+      const [posts, setPosts] = useState([]);
+      const [total, setTotal] = useState("");
+      const [page, setPage] = useState(1);
+      const [postPerPage, setPostPerPage] = useState(10);
+
+      const indexOfLastPage = page + postPerPage;
+      const indexOfFirstPage = indexOfLastPage - postPerPage;
+      const currentPosts = posts.slice(indexOfFirstPage, indexOfLastPage);
+
+      const usersPerPage = 5;
+
+      const onShowSizeChange = (current, pageSize) => {
+        setPostPerPage(pageSize);
+        };
+        
+        const itemRender = (current, type, originalElement) => {
+        
+        if(type === "prev") {
+        return <a>Previous</a>
+        }
+        if(type === "next") {
+        return <a>Next</a>;
+        }
+        return originalElement;
+        };
+
+
+
     function pickDate(date, dateString) {
       setForm({...form, petBirthdate: dateString})
     }
@@ -565,9 +598,29 @@ const AnimalList  = () => {
                   </button>
                 </Form.Item>
               </div>
-                </form>
+                </form> 
                   </>
                 </Modal>
+
+                <div className = 'grid justify-items-end  mt-80  pt-80  mr-9 '>
+                    
+                    <Pagination
+                     defaultCurrent = {1} 
+                      onChange = {(value) => setPage(value)}
+                      pageSize = {postPerPage}
+                      total = {total}
+                      current = {page}
+                      showSizeChanger
+                      showQuickJumper
+                      onShowSizeChange = {onShowSizeChange}
+                      itemRender = {itemRender}
+                      usersPerPage = {usersPerPage}
+   
+                    />
+    
+    
+                    </div>  
+
     </>
      )
 }
