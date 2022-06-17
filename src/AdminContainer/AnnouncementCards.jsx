@@ -155,15 +155,15 @@ const updateOk = () => {
 
   return (
    <>
-           <div className='basis-1/3 shadow-lg' key={ann.id}>
-                <img src={ann.imageUrl} alt='announcement' className='rounded-md w-full h-2/5' />
+           <div className='border bg-white shadow-2xl h-full' key={ann.id}>
+                <img src={ann.imageUrl} alt='announcement' className='rounded-md w-full h-3/6' />
                   <div className='flex font-Poppins py-3 ml-3 hover:text-[#155e59]'>
                     <AiFillBell size='30px'/>
                     <h1 className='pt-1 pl-2'>
                      { ann.dateCreated.toDate().toDateString()}
                     </h1>
                   </div>
-                <div className='w-3/4 py-3'   >
+                <div className='w-3/4 py-3 flex flex-col'>
                   <h1 className='text-[#155e59] ml-5 lg:text-sm font-bold md:text-xs'>
                   {ann.title.length >= 20 ?
                   <>

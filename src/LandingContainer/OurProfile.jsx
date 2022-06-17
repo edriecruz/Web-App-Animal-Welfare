@@ -332,8 +332,7 @@ export const OurProfile = () => {
                 </div>
                 <div className='flex justify-center items-center text-center pt-5 text-base'>
                     <p className='text-[#2c2c2c] font-medium'> 
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus 
-                    luctus aliquet justo sed placerat."  </p>
+                    "The hardest choices require <br/> the strongest wills" </p>
                 </div>
                 <div className='flex justify-evenly items-center text-center pt-6 pb-4'>
                     <a className='hover:text-[#d95858] pr-2 text-[#155e59]' href='https://github.com/marklestermoreno'>

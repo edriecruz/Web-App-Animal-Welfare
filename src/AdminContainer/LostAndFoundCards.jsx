@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import {AiFillCalendar} from 'react-icons/ai'
-import {IoIosPaw} from 'react-icons/io'
 import { Modal, notification } from 'antd';
 
 import {FaSadTear} from 'react-icons/fa'
@@ -80,23 +79,25 @@ export const LostAndFoundCards = ({laf}) => {
 {laf.hasApproved === true ?
   <>
 
-    <div className='h-full border bg-white shadow-2xl' key={laf.id}>
+    <div className='border bg-white shadow-2xl h-full' key={laf.id}>
     <img src={laf.imageUrl} alt='lost' className='rounded-md w-full h-3/6' />
       <div className='flex pr-5 py-3 text-[#155e59] hover:text-[#d95858] pl-5'>
         <AiFillCalendar size='30px'/>
         <h1 className='pt-1 pl-2 text-[#155e59]'>{laf.dateOfLastSeen}</h1>
       </div>
     <div className='w-3/4 py-3 flex flex-col pl-5'>
-      <h1 className='text-[#d95858] lg:text-2xl md:text-base font-bold truncate'>
-      {laf.contactNo}</h1>
+      <h1 className='text-[#d95858] lg:text-2xl md:text-base font-bold truncate'
+        style={{color: laf.whatReporting === "Lost" ? "#ef4444" : "#22c55e"
+        }} > 
+        { laf.whatReporting } 
+      </h1>
       <p className='text-base text-[#155e59] capitalize truncate'>
       {laf.reporterName}
       </p>
-        <button 
+      <button 
         onClick={showModal}
-        className="flex text-[#d95858] font-bold hover:text-[#155e59] pt-8 pb-6 lg:text-base md:text-xs md:font-medium">
-        <p className='pt-1'> Read Info </p> 
-        <IoIosPaw size='30px' className="pb-2 lg:mt-1.5 md:hidden xsm:mt-1 hover:text-[#155e59]"/>
+        className="flex text-[#d95858] font-bold hover:text-[#155e59] pt-4 lg:text-base md:text-xs md:font-medium">
+        <p className='pb-5'> Read Info </p> 
         </button>
     </div>
   </div>

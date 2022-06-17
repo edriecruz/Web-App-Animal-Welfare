@@ -212,11 +212,21 @@ const handleImage = e => {
     <div className='border bg-white shadow-2xl h-full' key={details.id}>
       <img src={details.imageUrl} alt='pet' className='rounded-md w-full h-3/6' />
     <div className='w-3/4 py-3 flex flex-col pl-5'>
-      <h1 className='text-[#d95858] lg:text-2xl md:text-base font-bold capitalize truncate'>
+      <h1 className='text-[#d95858] pb-2 lg:text-2xl md:text-base font-bold capitalize truncate'>
       {details.petName}</h1>
-      <p className='lg:text-sm md:text-xs text-[#155e59] md:truncate capitalize truncate '>
+      <p className='lg:text-sm md:text-xs text-[#155e59] pb-2 font-semibold md:truncate capitalize truncate '>
       {details.ownerName}
       </p>
+       {
+      details.hasVaccinated === 'Yes' ?
+        <p className='text-[#2c2c2c] font-medium'> Vaccinated </p> 
+        :
+      details.hasVaccinated === 'No' ?
+        <p className='text-[#2c2c2c] font-medium'> Unvaccinated </p> 
+        :
+        <p className='text-[#2c2c2c] font-medium'> Unsure </p> 
+      } 
+
         <button 
         onClick={showModal}
         className="flex  text-[#d95858] font-bold hover:text-[#155e59] pt-4 lg:text-base md:text-xs md:font-medium">

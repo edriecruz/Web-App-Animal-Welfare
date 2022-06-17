@@ -8,8 +8,6 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 
 
-
-
 // Database
 import { db } from '../firebase-config'
 import {collection, onSnapshot, query, where} from 'firebase/firestore'

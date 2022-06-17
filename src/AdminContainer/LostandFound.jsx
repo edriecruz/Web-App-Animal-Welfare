@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react'
-import { Link } from 'react-router-dom';    
 
 // Icons and Images
 import infobg from '../assets/infobg.png'
+import noData from '../assets/noData.png'
 import {FcSearch} from 'react-icons/fc'
 import {AiFillCaretDown} from 'react-icons/ai'
 import {IoIosPaw} from 'react-icons/io'
@@ -29,8 +29,6 @@ const lostFoundId = "laf-" + uuidv4().slice(0,8);
 const LostandFound  = () => {
 
     const isNotActive = 'flex items-center px-2 gap-3 text-base font-medium text-[#155e59] capitalize bg-white rounded-lg py-1 px-2 hover:text-[#d95858]'
-    const buttonStyle = 'flex justify-center items-center text-white lg:ml-16 md:ml-10 mt-5 px-3 gap-3 text-base font-medium text-[#155e59] capitalize bg-white rounded-lg hover:text-[#d95858]'
-
     
       const [LostAndFound, setLostAndFound] = useState([])
       const lostAndFoundCollectionRef = collection(db, "LostAndFound")
@@ -160,17 +158,13 @@ const LostandFound  = () => {
                 
             setLoading(false)
             setIsModalVisible(false)
-            notification.success({
-              message: 
-                  <div className='flex flex-col justify-center items-center' style={{marginLeft: "-50px"}}>
-                    <RiStarSmileFill className='my-5 text-green-500' style={{fontSize: '30px'}}/> 
-                    <p className='px-3 pb-5 text-justify text-sm'>
-                      Form Submitted
-                    </p>
-                  </div>,
-              icon: <> </>,
-              duration: 3,
-          });
+            notification.open({
+              icon: <> <RiStarSmileFill className='mt-5 text-green-500'/>   </>,
+              message:  <> <p className='text-green-500'> Lost and Found Added </p> </>,
+              duration: 5,
+              description:
+              'Pet has been published in lost and found publicly ',
+          })
           }
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
 
@@ -221,7 +215,79 @@ const LostandFound  = () => {
               setOrder("asc")
           }
         }
-    
+         // Pagination
+
+         const [currentPage, setcurrentPage] = useState(1);
+         const [itemsPerPage, ] = useState(9);
+       
+         const [pageNumberLimit,] = useState(3);
+         const [maxPageNumberLimit, setmaxPageNumberLimit] = useState(5);
+         const [minPageNumberLimit, setminPageNumberLimit] = useState(0);
+       
+         const handleClick = (event) => {
+           setcurrentPage(Number(event.target.id));
+         };
+       
+         const pages = [];
+         for (let i = 1; i <= Math.ceil(LostAndFound.length / itemsPerPage); i++) {
+           pages.push(i);
+         }
+       
+         const indexOfLastItem = currentPage * itemsPerPage;
+         const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+         const currentItems = LostAndFound.slice(indexOfFirstItem, indexOfLastItem);
+       
+         const renderPageNumbers = pages.map((number) => {
+           if (number < maxPageNumberLimit + 1 && number > minPageNumberLimit) {
+             return (
+               <button
+                 key={number}
+                 id={number}
+                 onClick={handleClick}
+                 className={currentPage === number ? 
+                   "bg-[#d95858] text-white rounded-lg px-4 py-2 cursor-not-allowed' mx-2" 
+                 : "bg-[#155e59] text-white rounded-lg px-4 py-2 hover:bg-[#d95858] cursor-pointer mx-2"}
+               >
+                 {number}
+               </button>
+             );
+           } else {
+             return null;
+           }
+         });
+   
+         const handleNextbtn = () => {
+           setcurrentPage(currentPage + 1);
+       
+           if (currentPage + 1 > maxPageNumberLimit) {
+             setmaxPageNumberLimit(maxPageNumberLimit + pageNumberLimit);
+             setminPageNumberLimit(minPageNumberLimit + pageNumberLimit);
+           }
+         };
+       
+         const handlePrevbtn = () => {
+           setcurrentPage(currentPage - 1);
+       
+           if ((currentPage - 1) % pageNumberLimit === 0) {
+             setmaxPageNumberLimit(maxPageNumberLimit - pageNumberLimit);
+             setminPageNumberLimit(minPageNumberLimit - pageNumberLimit);
+           }
+         };
+       
+         let pageIncrementBtn = null;
+         if (pages.length > maxPageNumberLimit) {
+           pageIncrementBtn = <button onClick={handleNextbtn}> </button>;
+         }
+       
+         let pageDecrementBtn = null;
+         if (minPageNumberLimit >= 1) {
+           pageDecrementBtn = <button onClick={handlePrevbtn}> </button>;
+         }
+       
+         const disabledPrev = currentPage === pages[0] ? true : false
+         const disabledNext = currentPage === pages[pages.length - 1] ? true : false
+     
+ 
     
         const info = (
             <Menu style={{ padding: 0, marginTop:'15px'}}
@@ -241,25 +307,19 @@ const LostandFound  = () => {
               </Menu.Item>
               <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="2">
                   <button 
-                    onClick={()=>sorting('petName')}
+                    onClick={()=>sorting('whatReporting')}
                   >
                       <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
                           <IoIosPaw />
                           <span className="ml-3">
-                          by Pet's Name
+                          by Status
                           </span>
                       </div>
                   </button>
               </Menu.Item>
-            </Menu>
-          );
-          const filterBy = (
-            <Menu style={{ padding: 0, marginTop:'15px'}}
-        
-            >
-              <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="1">
+              <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="2">
                   <button 
-                  onClick={() => sorting('petName')}
+                    onClick={()=>sorting('petType')}
                   >
                       <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
                           <IoIosPaw />
@@ -269,21 +329,9 @@ const LostandFound  = () => {
                       </div>
                   </button>
               </Menu.Item>
-    
-              <Menu.Item className='font-Poppins text-gray-900 hover:text-[#155e59] text-base' style={{ margin: 0 , padding:"10px 15px"}} key="2">
-                  <button 
-                    onClick={() => sorting('ownerName')}
-                  >
-                      <div className='flex justify-start font-medium items-center hover:text-[#155e59]'>
-                          <IoIosPaw />
-                          <span className="ml-3">
-                          by Pet Gender
-                          </span>
-                      </div>
-                  </button>
-              </Menu.Item>
             </Menu>
           );
+    
 
   return (
      
@@ -313,20 +361,6 @@ const LostandFound  = () => {
                     </button>
                     <div className='flex justify-end'> 
                       <Dropdown 
-                          overlay={filterBy} 
-                          placement='bottomCenter' 
-                          className='flex justify-center items-center text-white lg:mr-12 md:mr-12 mt-5'
-                      >
-                          <button
-                          className={isNotActive}
-                          >
-                                          <span>
-                            Filter By
-                          </span>
-                          <AiFillCaretDown />
-                          </button>
-                      </Dropdown>
-                      <Dropdown 
                           overlay={info} 
                           placement='bottomRight' 
                           className='flex justify-center items-center text-white lg:mr-16 md:mr-3 mt-5'
@@ -341,16 +375,62 @@ const LostandFound  = () => {
                           </button>
                       </Dropdown>
                     </div>
-                </div>
+                </div> 
+                
+                { currentItems.filter(animal => animal.hasApproved === true).length < 1 ? 
+
+                  <div className='flex flex-col justify-center items-center text-center pt-48'> 
+                    <h1 className='text-[#155e59] pb-5 font-semibold text-4xl uppercase'> 
+                      No Data Available.
+                    </h1>
+                    <img src={noData} alt='no-data' width={300} />
+                  </div>
+                    :  
+
+                  <>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mx-auto px-10 lg:ml-5 md:ml-2 py-6 mt-10" style={{
                     maxWidth: '1400px'
                 }}>
-                    {LostAndFound.map((user) => (
+                    {currentItems.map((user) => (
                         <>
                         <LostAndFoundCards laf={user} key={user.id}/>
                     </>
                     ))}
                     </div>
+                    <div className='flex items-center justify-center ml-3 py-10'>
+                        <div>
+
+                              <button
+                                className={!disabledPrev ?
+                                  'bg-[#155e59] text-white rounded-lg px-4 py-2 hover:bg-[#d95858] cursor-pointer'
+                                  :
+                                  'bg-[#d3d3d3] text-white rounded-lg px-4 py-2 cursor-not-allowed'
+                                }
+                                onClick={handlePrevbtn}
+                                disabled={disabledPrev}
+                              >
+                                <p>Prev </p> 
+                              </button>
+                         </div>
+                            <div className='px-3 py-3'>  {pageDecrementBtn} </div>
+                            <div className='px-3 py-3'>  {renderPageNumbers} </div>
+                            <div className='px-3 py-3'>  {pageIncrementBtn} </div>
+                          <div>
+                              <button
+                               className={
+                                !disabledNext ? 
+                                'bg-[#155e59] text-white rounded-lg px-4 py-2 hover:bg-[#d95858] cursor-pointer'
+                                :
+                                'bg-[#d3d3d3] text-white rounded-lg px-4 py-2 cursor-not-allowed'
+                               }
+                                onClick={handleNextbtn}
+                                disabled={disabledNext}
+                              >
+                                <p>  Next </p>
+                              </button>
+                          </div>
+                        </div>
+                        </> }
                 </div>
         </div>
 

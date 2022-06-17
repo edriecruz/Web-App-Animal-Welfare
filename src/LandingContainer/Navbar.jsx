@@ -26,7 +26,7 @@ import moment from 'moment';
 // Database
 import { useUserContext } from '../context/userContext';
 import { db, storage } from '../firebase-config'
-import {collection, onSnapshot, doc, addDoc, serverTimestamp, Timestamp, orderBy, query} from 'firebase/firestore'
+import {collection, onSnapshot, addDoc, Timestamp, orderBy, query} from 'firebase/firestore'
 import {ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 
 const { TextArea } = Input;
@@ -68,24 +68,16 @@ export const Navbar = () => {
       setIsModalVisible(false);
   };
 
-  const handleCancel = () => {
-      setIsModalVisible(false);
-  };
+
 
   const isNotActive = 'flex items-center px-2 gap-3 text-lg font-medium text-[#155e59] transition-all duration-200 ease-in capitalize hover:rounded-lg hover:bg-[#155e59] hover:text-white hover:px-3 hover:py-2'
   const isNotActiveDrawer = 'flex items-center justify-center py-2 my-2 gap-5 text-gray-500 transition-all duration-200 ease-in capitalize text-[#155e59] hover:bg-[#155e59] hover:text-white hover:py-2 hover:px-2'
 
   //Authentication 
 
-  const { login, validating, email, password, setEmail, setPassword} = useUserContext();
+  const { error, login, validating, setEmail, setPassword} = useUserContext();
 
   const [form] = Form.useForm();
-
-  const reset = () => {
-    form.resetFields()
-    setEmail('')
-    setPassword('')
-  }  
 
   const info = (
     <Menu style={{ padding: 0, marginTop:'15px'}}
@@ -170,8 +162,8 @@ export const Navbar = () => {
 
 
   const [loading, setLoading] = useState(false)
-  const [Animal_Profile, setAnimal_Profile] = useState([])
-  const [progress, setProgress] = useState(0)
+  const [, setAnimal_Profile] = useState([])
+  const [, setProgress] = useState(0)
   const [image, setImage] = useState(null)
   const [lafForm, setLafForm] = useState({
 
@@ -484,7 +476,7 @@ export const Navbar = () => {
         footer={false}
         visible={lostFound}
         onClose={handleOkLostFound} 
-        maskClosable = {false}
+        maskClosable={false}
         width='350px'
         destroyOnClose={true}
         zIndex={1000}
@@ -509,7 +501,7 @@ export const Navbar = () => {
                   <Input 
                    onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
                    onChange={(e) => {setEmail(e.target.value)}}
-                    disabled={validating || email === 'err'}
+                    disabled={validating}
                   />
                 </Form.Item>
                 <p className='text-[#999897] text-md pb-1 pt-3'> Password </p> 
@@ -517,13 +509,16 @@ export const Navbar = () => {
                   <Input.Password 
                     onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
                     onChange={(e) => {setPassword(e.target.value)}}
-                    disabled={validating || password === 'err'}
+                    disabled={validating}
                   />
                 </Form.Item>
 
-              {password === 'err' && email === 'err' ? 
+              {error === 'err' ? 
                 <>
-                  <h1 className='text-red-500 font-semibold text-center pb-5'> Incorrect Data. Please click <b> Reset </b> to clear fields  </h1>
+                  <div className='flex justify-center flex-col'>
+                    <h1 className='text-red-500 font-semibold text-center pt-3 pb-2'> <b> Username </b> & <b> Password </b> do not exists.  </h1>
+
+                  </div>
                 </>
                 : 
                 <> </>
@@ -531,18 +526,18 @@ export const Navbar = () => {
               <div className='flex justify-around pr-12 pt-2' >
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                   <button className='rounded-full text-[#155e59] text-md px-6 py-2'
-                    onClick={reset} 
+                    onClick={handleCancelLostFound} 
                     style={{ 
                       borderWidth: '0.5px',
                       borderColor: '#155e59'
                       
                       }}>
-                    Reset
+                    Cancel
                   </button>
                 </Form.Item>
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                   <button type='submit'
-                    disabled={email === 'err' && password === 'err'}
+                    disabled={validating}
                     className={
                       validating ? 
                       'rounded-full bg-[#155e59] opacity-50 text-md text-white px-5 py-2'
