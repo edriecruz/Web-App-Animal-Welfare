@@ -36,7 +36,7 @@ export const LostFound = () => {
                           backgroundPosition: 'center',
                       }}>
         <div className='flex flex-col justify-center p-3 mt-10'>
-            <div className='flex flex-col items-center self-center w-1/2'>
+            <div className='flex flex-col items-center self-center w-full'>
                 <FaFish size='30px' className='text-[#d95858]'/>
                 <h1 className='text-white font-semibold text-lg'>
                     Our News</h1>
@@ -44,7 +44,8 @@ export const LostFound = () => {
                     Lost and Found Report
                 </h1>
                 <p className='text-center lg:text-base py-6 md:text-sm xsm:text-sm'>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                    The following is a list of reported lost and found pets.
+
                 </p>
             </div>
           </div>

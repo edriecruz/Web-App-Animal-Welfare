@@ -106,6 +106,8 @@ const updateOk = () => {
             (error) => console.log(error),
             () => {
               getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+
+                image ? 
                 updateDoc(doc(db, "Announcement", id), {
                   ...updateForm,
                   announcementId: updateForm.announcementId,
@@ -114,7 +116,18 @@ const updateOk = () => {
                   details: updateForm.details,
                   imageUrl:downloadURL,
                   title: updateForm.title
+                })
+                :
+                updateDoc(doc(db, "Announcement", id), {
+                  ...updateForm,
+                  announcementId: updateForm.announcementId,
+                  author: updateForm.author,
+                  dateCreated: Timestamp.now().toDate(),
+                  details: updateForm.details,
+                  imageUrl:updateForm.imageUrl,
+                  title: updateForm.title
                 });
+
                 setIsModalVisible(false)
                 setUpdateModal(false)
                 notification.open({
@@ -293,7 +306,6 @@ const updateOk = () => {
                   <p className='text-[#2c2c2c] font-medium text-md pb-1'> Announcement </p> 
                   <input type='file' name='image' 
                      disabled={loading} accept="image/*"
-                     required
                     onChange={ handleImage }
                   />
                 </div>

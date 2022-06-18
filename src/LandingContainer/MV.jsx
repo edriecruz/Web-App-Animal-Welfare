@@ -9,7 +9,8 @@ export const MV = () => {
                     Mission
                 </h1>
                 <p  className="text-center text-lg">
-                    Committed to improve the lives of animals in the community.
+                To manage pets using a database while ensuring their health and safety. 
+
                 </p>
             </div>
             <div className=" flex flex-col items-center w-96 space-y-8 ">
@@ -17,7 +18,8 @@ export const MV = () => {
                     Vision
                 </h1>
                 <p className=" text-center text-lg">
-                Protecting Animals, Positive Interaction and Cruelty ceased to exist
+                Animal monitoring and good relationships for all pet-friendly establishments
+
                 </p>
             </div>
         </div>

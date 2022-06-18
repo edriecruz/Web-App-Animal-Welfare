@@ -326,7 +326,7 @@ export const Navbar = () => {
     <>
 
       <div className='hidden lg:flex justify-between bg-white items-center px-7 py-4'>
-        <a href="home" className='text-gray-700 hover:brightness-110 '>
+        <a href="/" className='text-gray-700 hover:brightness-110 '>
             <div className='flex items-center'>
                 <img src={ LogoTitle } alt="trackit-ph" className="w-80" />
             </div>
@@ -574,7 +574,7 @@ export const Navbar = () => {
 
                 <p className="leading-tight m-0 text-gray-500 font-normal text-justify pt-5" style={{ margin: "20px 0 20px 0" }}>
                   <span className="font-medium text-[#155e59]">How it works?&nbsp;</span>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus aliquam nihil, a expedita culpa dicta qui tempora? Laboriosam doloribus dignissimos quod commodi eum error. Magni aliquam est rem tempora!
+                  While filling up the lost & found form, the information will not show through the application, thus this will go first through the admin and review for confirmation. <b> For immediate act, call the barangay hotline. </b>
                 </p>          
 
                 <p className='text-[#2c2c2c] font-medium text-md pt-5'> Your Full Name </p> 

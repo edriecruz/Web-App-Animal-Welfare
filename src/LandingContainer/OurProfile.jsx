@@ -195,8 +195,11 @@ export const OurProfile = () => {
               <h1 className=' text-[#d95858] font-extrabold lg:text-4xl py-2 md:text-2xl xsm:text-sm'>
                   Animal Welfare Developer
               </h1>
+              <h1 className=' text-[#d95858] font-semibold lg:text-xl pt-4 md:text-lg xsm:text-sm'>
+                 Meat the Team 
+              </h1>
               <p className='text-center lg:text-base py-6 md:text-sm xsm:text-sm'>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                Every member of the team collaborated for the project to enhance the productivity of managing pets. For this project is wholly for us, we are inspired and willing to help and serve people.
               </p>
           </div>
         </div>
@@ -254,7 +257,7 @@ export const OurProfile = () => {
                                 onClick={showKerwin}
                                 >
                                 <img src={KerwinProfile} alt='kerwin-profile' width="305px" /> 
-                                <p className='text-[#155e59] text-2xl font-semibold'>Kerwin Alemaña </p>  
+                                <p className='text-[#155e59] text-2xl font-semibold'>Kerwin Alemania </p>  
                                 <p className='text-[#d95858] text-md font-semibold'> Backend Developer/Programmer </p> 
                             </Card>
                         </h3>
@@ -366,8 +369,8 @@ export const OurProfile = () => {
                 </div>
                 <div className='flex justify-center items-center text-center pt-5 text-base'>
                     <p className='text-[#2c2c2c] font-medium'> 
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus 
-                    luctus aliquet justo sed placerat."  </p>
+                    "Bark up the wrong tree, stumble
+                    <br /> Used to falling great heights"  </p>
                 </div>
                 <div className='flex justify-evenly items-center text-center pt-6 pb-4'>
                     <a className='hover:text-[#d95858] pr-2 text-[#155e59]' href='https://github.com/gradths'>
@@ -376,7 +379,7 @@ export const OurProfile = () => {
                     <a className='hover:text-[#d95858] text-[#155e59]' href='https://www.facebook.com/erickaqw'>
                         <AiFillFacebook size='35px'/>
                     </a>
-                    <a className='hover:text-[#d95858] pl-2 text-[#155e59]' href='https://github.com/gradths'>
+                    <a className='hover:text-[#d95858] pl-2 text-[#155e59]' href='https://www.linkedin.com/in/enrico-ramos-37747b239/'>
                         <AiFillLinkedin size='35px'/>
                     </a>
                 </div>
@@ -403,8 +406,7 @@ export const OurProfile = () => {
                 </div>
                 <div className='flex justify-center items-center text-center pt-5 text-base'>
                     <p className='text-[#2c2c2c] font-medium'> 
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus 
-                    luctus aliquet justo sed placerat."  </p>
+                    "Carpe Diem (Sieze the Day)"  </p>
                 </div>
                 <div className='flex justify-evenly items-center text-center pt-6 pb-4'>
                     <a className='hover:text-[#d95858] pr-2 text-[#155e59]' href='https://github.com/edriecruz'>
@@ -434,13 +436,12 @@ export const OurProfile = () => {
             <div className='flex flex-col'> 
                 <div className='flex flex-col justify-center items-center text-center'>
                     <img src={KerwinProfile} alt='lester-profile' width="305px" /> 
-                    <p className='text-[#155e59] text-2xl font-semibold'> Kerwin Alemaña </p>  
+                    <p className='text-[#155e59] text-2xl font-semibold'> Kerwin Alemania </p>  
                     <p className='text-[#d95858] text-lg font-semibold'> Backend Developer/Programmer </p> 
                 </div>
                 <div className='flex justify-center items-center text-center pt-5 text-base'>
                     <p className='text-[#2c2c2c] font-medium'> 
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus 
-                    luctus aliquet justo sed placerat."  </p>
+                    "Experience is the name everyone gives to their mistakes"  </p>
                 </div>
                 <div className='flex justify-evenly items-center text-center pt-6 pb-4'>
                     <a className='hover:text-[#d95858] pr-2 text-[#155e59]' href='https://github.com/Tellestarle'>
@@ -476,14 +477,14 @@ export const OurProfile = () => {
                 </div>
                 <div className='flex justify-center items-center text-center pt-5 text-base'>
                     <p className='text-[#2c2c2c] font-medium'> 
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus 
-                    luctus aliquet justo sed placerat."  </p>
+                    "Talk is cheap. Show me the code."  </p>
                 </div>
                 <div className='flex justify-evenly items-center text-center pt-6 pb-4'>
                     <a className='hover:text-[#d95858] pr-2 text-[#155e59]' href='https://github.com/TazCoding'>
                         <AiFillGithub size='35px'/>
                     </a>
-                    <a className='hover:text-[#d95858] text-[#155e59]' href='https://www.facebook.com/eljhay.ramos.9'>
+                    <a className='hover:text-[#d95858] text-[#155e59]'
+                         href='https://www.facebook.com/eljhay.ramos.9' >
                         <AiFillFacebook size='35px'/>
                     </a>
                     <a className='hover:text-[#d95858] pl-2 text-[#155e59]' href='https://www.linkedin.com/mwlite/in/el-jhay-ramos-a8208021a'>
@@ -512,8 +513,7 @@ export const OurProfile = () => {
                 </div>
                 <div className='flex justify-center items-center text-center pt-5 text-base'>
                     <p className='text-[#2c2c2c] font-medium'> 
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus 
-                    luctus aliquet justo sed placerat."  </p>
+                    "Failure isn't a sign to stop , It's a ladder to your Success."  </p>
                 </div>
                 <div className='flex justify-evenly items-center text-center pt-6 pb-4'>
                     <a className='hover:text-[#d95858] pr-2 text-[#155e59]' href='https://github.com/k1llertyp3'>
@@ -548,8 +548,7 @@ export const OurProfile = () => {
                 </div>
                 <div className='flex justify-center items-center text-center pt-5 text-base'>
                     <p className='text-[#2c2c2c] font-medium'> 
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus 
-                    luctus aliquet justo sed placerat."  </p>
+                    "Life is short. Enjoy everything about it, the tomorrow might be the last."  </p>
                 </div>
                 <div className='flex justify-evenly items-center text-center pt-6 pb-4'>
                     <a className='hover:text-[#d95858] pr-2 text-[#155e59]' href='https://github.com/imjustapotato'>

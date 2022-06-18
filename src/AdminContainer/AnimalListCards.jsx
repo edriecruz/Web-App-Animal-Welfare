@@ -167,7 +167,10 @@ const handleImage = e => {
             },
             (error) => console.log(error),
             () => {
+              
               getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+
+                image ? 
                 updateDoc(doc(db, "Animal_Profile", id), {
                   ...form,
                   petId: form.petId,
@@ -183,15 +186,34 @@ const handleImage = e => {
                   petName: form.petName,
                   petType: form.petType,
                   dateCreated: Timestamp.now().toDate(),
-                  imageUrl: downloadURL,
+                  imageUrl:downloadURL,
+                })
+                :
+                updateDoc(doc(db, "Animal_Profile", id), {
+                  ...form,
+                  petId: form.petId,
+                  hasVaccinated: form.hasVaccinated,
+                  petVaccine: form.petVaccine,
+                  ownerAddress: form.ownerAddress,
+                  ownerContact: form.ownerContact,
+                  ownerName: form.ownerName,
+                  petBirthdate: form.petBirthdate,
+                  petBreed: form.petBreed,
+                  petDetails: form.petDetails,
+                  petGender: form.petGender,
+                  petName: form.petName,
+                  petType: form.petType,
+                  dateCreated: Timestamp.now().toDate(),
+                  imageUrl: form.imageUrl,
                 });
+
                 setIsModalVisible(false)
                 setUpdateModal(false)
                 notification.open({
                   icon: <> <RiStarSmileFill className='mt-5 text-green-500'/>   </>,
                   message:  <> <p className='text-green-500'> Pet Updated </p> </>,
                   description:
-                  'Your announcement has been updated',
+                  'Your document has been updated',
                 });
               });
             });
@@ -546,7 +568,7 @@ const handleImage = e => {
 
                 <div className='py-3 pb-3'>
                   <p className='text-[#2c2c2c] font-medium text-md pb-1'> Pet's Picture (Landscape for Best Preview) </p> 
-                  <input type='file' disabled={loading} required name='image' accept="image/*" onChange={ handleImage }/>
+                  <input type='file' disabled={loading} name='image' accept="image/*" onChange={ handleImage }/>
                 </div>
 
                 <div className='flex justify-around pr-12 pt-2' >

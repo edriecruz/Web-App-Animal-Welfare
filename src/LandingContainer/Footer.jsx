@@ -34,14 +34,15 @@ export const Footer = () => {
         </div>
 
         <div className='basis-1/3 p-10'>
-            <h1 className='font-semibold text-3xl text-[#155e59] pb-4'>Information</h1>
+            <h1 className='font-semibold text-3xl text-[#155e59] pb-4'>In
+            <button className='font-semibold' onClick={resetModal}> f </button>
+            ormation</h1>
             <Link to='our-profile' className='text-2xl font-semibold hover:text-[#d95858]'>
                 <p className='text-xl font-medium border-t-2 border-[#155e59] pt-4 '>Our Profile </p>
             </Link>
-            <Link to='faq' className='text-2xl font-semibold hover:text-[#d95858]'> 
+            <Link to='' className='text-2xl font-semibold hover:text-[#d95858]'> 
                 <p className='text-xl font-medium '>Frequently Asked Questions</p>
             </Link>
-            <button className='text-white' onClick={resetModal}> i </button>
 
         </div>
         <div className='basis-1/3 p-10'>
@@ -102,7 +103,7 @@ export const Footer = () => {
             <Link to='our-profile' className='text-2xl font-semibold hover:text-[#d95858]'>
                 <p className='text-xl font-medium border-t-2 border-[#155e59] pt-4 '>Our Profile </p>
             </Link>
-            <Link to='faq' className='text-2xl font-semibold hover:text-[#d95858]'> 
+            <Link to='' className='text-2xl font-semibold hover:text-[#d95858]'> 
                 <p className='text-xl font-medium '>Frequently Asked Questions</p>
             </Link>
            

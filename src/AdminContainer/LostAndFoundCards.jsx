@@ -81,9 +81,9 @@ export const LostAndFoundCards = ({laf}) => {
 
     <div className='border bg-white shadow-2xl h-full' key={laf.id}>
     <img src={laf.imageUrl} alt='lost' className='rounded-md w-full h-3/6' />
-      <div className='flex pr-5 py-3 text-[#155e59] hover:text-[#d95858] pl-5'>
-        <AiFillCalendar size='30px'/>
-        <h1 className='pt-1 pl-2 text-[#155e59]'>{laf.dateOfLastSeen}</h1>
+      <div className='flex md:flex-col lg:flex-row pr-5 py-3 text-[#155e59] hover:text-[#d95858] pl-5'>
+        <h1 className='pt-1 text-[#155e59]'> Last Seen: </h1>
+        <h1 className='pt-1 lg:pl-2 md:pl-0 text-[#155e59] font-semibold'>{laf.dateOfLastSeen}</h1>
       </div>
     <div className='w-3/4 py-3 flex flex-col pl-5'>
       <h1 className='text-[#d95858] lg:text-2xl md:text-base font-bold truncate'

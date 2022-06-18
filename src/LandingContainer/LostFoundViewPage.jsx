@@ -204,7 +204,8 @@ const LostFoundViewPage = () => {
                   Lost and Found Report
               </h1>
               <p className='text-center lg:text-base py-6 md:text-sm xsm:text-sm'>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+              The following is a list of reported lost and found pets.
+
               </p>
           </div>
         </div>

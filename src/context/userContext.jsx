@@ -4,7 +4,9 @@ import {notification} from 'antd'
 import {RiStarSmileFill} from 'react-icons/ri'
 import {FaSadTear} from 'react-icons/fa'
 
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut, sendPasswordResetEmail} from 'firebase/auth'
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut, 
+    sendPasswordResetEmail, setPersistence, browserSessionPersistence} from 'firebase/auth'
+
 import { auth } from "../firebase-config";
 
 const UserContext = createContext({})
@@ -25,11 +27,22 @@ export const UserContextProvider = ({children}) => {
         setValidating(true)
         try{
             signInWithEmailAndPassword(auth, email, password)
+            setPersistence(auth, browserSessionPersistence)
+            .then(() => {
+                return signInWithEmailAndPassword(auth, email, password);
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode + errorMessage)
+            });
+            
             setTimeout(() => {
                 if(email === auth.email && password === auth.password){
                     setValidating(false);
                     setEmail(auth.email)
                     setPassword(auth.password)
+                    
                 }
                 else {
                     setEmail(email)
@@ -57,6 +70,7 @@ export const UserContextProvider = ({children}) => {
             setError(error)
         }
     }
+
 
     const forgotPassword = async (e) => {
         e.preventDefault();
@@ -90,8 +104,10 @@ export const UserContextProvider = ({children}) => {
             res ? setUser(res) : setUser(null)
             setMessage("")
             setLoading(false)
+
         })
-    
+
+       
         return unsubsribe
     }, [])
 

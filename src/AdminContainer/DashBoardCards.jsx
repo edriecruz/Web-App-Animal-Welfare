@@ -167,9 +167,11 @@ const DashBoardCards = () => {
 
                 <div className='flex lg:flex-row sm:flex-col items-center justify-center'>
                     <div className='lg:w-1/3 sm:w-2/3 h-full lg:ml-20 py-10'>
+                        <h1 className='flex items-center justify-center text-center pb-3 text-lg font-semibold'> Number of Vaccinated Pets </h1>
                         <Pie data={vaccinate} />
                     </div>
                     <div className='lg:w-1/3 sm:w-2/3 h-full lg:ml-28 py-10'>
+                        <h1 className='flex items-center justify-center text-center pb-3 text-lg font-semibold'> Number of Pet Type </h1>
                         <Pie data={petType}/>
                     </div>
                 </div>
